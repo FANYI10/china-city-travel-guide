@@ -772,6 +772,37 @@
                 flex-wrap: wrap;
             }
         }
+        /* 城市分类筛选按钮 */
+        .city-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .filter-btn {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            border: 2px solid #E0E0E0;
+            background: #fff;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #666;
+        }
+        .filter-btn:hover {
+            border-color: #FF6B6B;
+            color: #FF6B6B;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #FF6B6B, #FF4757);
+            border-color: #FF4757;
+            color: #fff;
+        }
+        /* 城市标记隐藏状态 */
+        .city-marker.hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -783,6 +814,12 @@
     <main class="main-container">
         <section class="map-section">
             <h2 class="map-title">📍 中国热门旅行城市</h2>
+            <div class="city-filter">
+                <button class="filter-btn active" data-category="all">全部</button>
+                <button class="filter-btn" data-category="municipality">直辖市</button>
+                <button class="filter-btn" data-category="capital">省会</button>
+                <button class="filter-btn" data-category="popular">热门</button>
+            </div>
             <div class="map-container" id="map">
                 <!-- SVG矢量中国地图 -->
                 <img class="map-svg" src="assets/chinaLow.svg" alt="中国地图">
@@ -855,6 +892,457 @@
 
     <script>
         const cities = [
+            // 直辖市
+            { id: 'beijing', name: '北京', x: 67.8, y: 41.2, category: 'municipality', spots: [
+                { name: '故宫博物院', x: 45, y: 35, icon: '🏯', desc: '明清两代皇家宫殿，世界最大的木质古建筑群，游览约4小时。', tags: ['世界遗产', '历史古迹', '必游'] },
+                { name: '八达岭长城', x: 65, y: 20, icon: '🧱', desc: '万里长城精华段，世界七大奇迹之一，游览约3-4小时。', tags: ['世界奇迹', '户外探险', '摄影'] },
+                { name: '颐和园', x: 30, y: 50, icon: '🏞️', desc: '清朝皇家园林，昆明湖万寿山，游览约3小时。', tags: ['皇家园林', '世界遗产', '休闲'] },
+                { name: '天坛公园', x: 55, y: 60, icon: '🏛️', desc: '明清皇帝祭天之所，祈年殿是北京地标，游览约2.5小时。', tags: ['世界遗产', '古建筑', '祈福'] },
+                { name: '什刹海', x: 40, y: 45, icon: '🌊', desc: '老北京风情街区，胡同游船酒吧，游览约2小时。', tags: ['老北京', '夜景', '酒吧'] }
+            ], transport: [
+                { name: '首都国际机场', type: 'airport', icon: '✈️', x: 70, y: 38, desc: '北京最大机场，距市区约30km，地铁机场线直达。' },
+                { name: '大兴国际机场', type: 'airport', icon: '✈️', x: 65, y: 44, desc: '新机场，距市区约50km，地铁大兴线可达。' },
+                { name: '北京南站', type: 'rail', icon: '🚄', x: 69, y: 43, desc: '高铁枢纽，京津城际、京沪高铁始发站。' },
+                { name: '北京西站', type: 'rail', icon: '🚄', x: 65, y: 40, desc: '京广高铁、京九铁路始发站。' }
+            ]},
+            { id: 'shanghai', name: '上海', x: 76.3, y: 64.7, category: 'municipality', spots: [
+                { name: '外滩', x: 50, y: 40, icon: '🌆', desc: '上海城市封面，万国建筑博览群，全长1.5公里，夜景绝美。', tags: ['城市地标', '夜景', '免费'] },
+                { name: '东方明珠', x: 60, y: 50, icon: '🗼', desc: '468米高的上海地标，可俯瞰全城，透明观光廊刺激。', tags: ['地标', '观光', '拍照'] },
+                { name: '迪士尼乐园', x: 80, y: 65, icon: '🏰', desc: '中国大陆首座迪士尼，童话世界，门票399元起。', tags: ['主题乐园', '亲子游', '梦幻'] },
+                { name: '豫园城隍庙', x: 35, y: 35, icon: '🏮', desc: '江南古典园林，南翔小笼包发源地，游览约2小时。', tags: ['古典园林', '美食街', '购物'] },
+                { name: '田子坊', x: 25, y: 55, icon: '🎨', desc: '旧里弄改造的艺术社区，文艺小店咖啡馆聚集地。', tags: ['文艺', '拍照', '咖啡'] }
+            ], transport: [
+                { name: '浦东国际机场', type: 'airport', icon: '✈️', x: 79, y: 67, desc: '国际航班为主，地铁2号线直达，磁悬浮可达。' },
+                { name: '虹桥国际机场', type: 'airport', icon: '✈️', x: 74, y: 63, desc: '国内航班为主，地铁2号线/10号线可达。' },
+                { name: '上海虹桥站', type: 'rail', icon: '🚄', x: 75, y: 64, desc: '高铁枢纽，京沪高铁终点站，与虹桥机场相连。' },
+                { name: '上海站', type: 'rail', icon: '🚄', x: 74, y: 66, desc: '沪宁城际等线路始发站，地铁1号线/3号线/4号线可达。' }
+            ]},
+            { id: 'tianjin', name: '天津', x: 70.5, y: 43.5, category: 'municipality', spots: [
+                { name: '天津之眼', x: 50, y: 40, icon: '🎡', desc: '世界上唯一建在桥上的摩天轮，夜景绝美。', tags: ['地标', '夜景', '浪漫'] },
+                { name: '古文化街', x: 40, y: 50, icon: '🏮', desc: '津门十景之一，老字号店铺，泥人张、杨柳青年画。', tags: ['古街', '文化', '购物'] },
+                { name: '五大道', x: 60, y: 60, icon: '🏛️', desc: '万国建筑博览会，2000多栋小洋楼，适合漫步。', tags: ['历史建筑', '拍照', '免费'] },
+                { name: '意大利风情区', x: 55, y: 45, icon: '🏰', desc: '亚洲唯一意大利风格建筑群，马可波罗广场。', tags: ['异域风情', '夜景', '美食'] }
+            ], transport: [
+                { name: '滨海国际机场', type: 'airport', icon: '✈️', x: 73, y: 45, desc: '天津主要机场，地铁2号线可达。' },
+                { name: '天津站', type: 'rail', icon: '🚄', x: 72, y: 44, desc: '京津城际、津秦高铁始发站。' },
+                { name: '天津西站', type: 'rail', icon: '🚄', x: 68, y: 43, desc: '京沪高铁重要站点。' }
+            ]},
+            { id: 'chongqing', name: '重庆', x: 54.0, y: 67.0, category: 'municipality', spots: [
+                { name: '洪崖洞', x: 50, y: 35, icon: '🏮', desc: '巴渝传统建筑，夜景如千与千寻，网红打卡圣地。', tags: ['网红打卡', '夜景', '免费'] },
+                { name: '解放碑', x: 45, y: 55, icon: '🏛️', desc: '重庆地标，繁华商圈，购物美食中心。', tags: ['地标', '购物', '美食'] },
+                { name: '磁器口古镇', x: 25, y: 45, icon: '🏘️', desc: '千年古镇，巴渝民俗风情，陈麻花毛血旺必尝。', tags: ['古镇', '小吃', '民俗'] },
+                { name: '李子坝轻轨', x: 60, y: 40, icon: '🚇', desc: '轻轨穿楼奇观，8D魔幻城市代表，免费打卡。', tags: ['网红', '免费', '奇观'] },
+                { name: '长江索道', x: 40, y: 65, icon: '🚡', desc: '横跨长江的空中巴士，俯瞰山城美景，需排队。', tags: ['观光', '夜景', '体验'] },
+                { name: '武隆天坑', x: 75, y: 70, icon: '🏔️', desc: '世界自然遗产，天生三桥震撼，距离市区较远。', tags: ['自然奇观', '世界遗产', '一日游'] }
+            ], transport: [
+                { name: '江北国际机场', type: 'airport', icon: '✈️', x: 57, y: 65, desc: '重庆主要机场，距市区约21km，地铁3号线/10号线可达。' },
+                { name: '重庆北站', type: 'rail', icon: '🚄', x: 53, y: 68, desc: '高铁枢纽，成渝高铁、渝万城际始发站。' },
+                { name: '重庆西站', type: 'rail', icon: '🚄', x: 52, y: 69, desc: '渝贵铁路、兰渝铁路等线路，地铁环线/5号线可达。' }
+            ]},
+
+            // 省会城市
+            { id: 'guangzhou', name: '广州', x: 63.8, y: 86.7, category: 'capital', spots: [
+                { name: '广州塔', x: 55, y: 40, icon: '🗼', desc: '广州新地标小蛮腰，600米高，傍晚登塔看日落夜景。', tags: ['城市地标', '夜景', '观光'] },
+                { name: '陈家祠', x: 35, y: 55, icon: '🏛️', desc: '岭南建筑艺术瑰宝，木雕砖雕精美绝伦。', tags: ['古建筑', '文化', '艺术'] },
+                { name: '沙面岛', x: 70, y: 60, icon: '🏝️', desc: '欧式建筑群，文艺打卡地，适合拍照喝下午茶。', tags: ['欧式建筑', '拍照', '文艺'] },
+                { name: '北京路步行街', x: 45, y: 45, icon: '🛍️', desc: '广州最繁华商业街，千年古道遗址，购物美食天堂。', tags: ['购物', '美食', '历史'] },
+                { name: '长隆野生动物世界', x: 80, y: 75, icon: '🦁', desc: '世界级野生动物园，可自驾游览，亲子游首选。', tags: ['动物园', '亲子游', '自驾'] }
+            ], transport: [
+                { name: '白云国际机场', type: 'airport', icon: '✈️', x: 66, y: 88, desc: '广州主要机场，距市区约28km，地铁3号线可达。' },
+                { name: '广州南站', type: 'rail', icon: '🚄', x: 62, y: 89, desc: '高铁枢纽，京广高铁、广深港高铁始发站。' },
+                { name: '广州站', type: 'rail', icon: '🚄', x: 63, y: 86, desc: '普速列车主要车站，地铁2号线/5号线可达。' }
+            ]},
+            { id: 'chengdu', name: '成都', x: 44.5, y: 62.5, category: 'capital', spots: [
+                { name: '大熊猫基地', x: 40, y: 20, icon: '🐼', desc: '世界著名的大熊猫保护基地，早上8点前到达熊猫最活跃。', tags: ['国宝熊猫', '亲子游', '必游'] },
+                { name: '宽窄巷子', x: 50, y: 45, icon: '🏠', desc: '成都历史文化街区，宽巷子窄巷子井巷子，体验慢生活。', tags: ['古街巷', '美食', '文艺'] },
+                { name: '锦里古街', x: 30, y: 55, icon: '🎭', desc: '三国文化主题古街，小吃天堂，晚上灯光很美。', tags: ['古街', '小吃', '夜景'] },
+                { name: '武侯祠', x: 25, y: 45, icon: '🏛️', desc: '纪念诸葛亮的祠庙，三国文化圣地，与锦里相邻。', tags: ['三国文化', '古建筑', '历史'] },
+                { name: '春熙路太古里', x: 60, y: 60, icon: '🛍️', desc: '成都核心商圈，IFS爬墙熊猫必打卡，时尚购物天堂。', tags: ['购物', '网红打卡', '美食'] },
+                { name: '人民公园', x: 45, y: 70, icon: '🌳', desc: '成都人休闲生活缩影，喝茶掏耳朵，体验地道慢生活。', tags: ['休闲', '茶馆', '本地生活'] }
+            ], transport: [
+                { name: '天府国际机场', type: 'airport', icon: '✈️', x: 49, y: 67, desc: '成都主要机场，距市区约50km，地铁18号线直达。' },
+                { name: '双流国际机场', type: 'airport', icon: '✈️', x: 44, y: 63, desc: '国内航线为主，距市区约15km，地铁10号线可达。' },
+                { name: '成都东站', type: 'rail', icon: '🚄', x: 48, y: 65, desc: '高铁枢纽，成渝高铁始发站，地铁2号线/7号线可达。' },
+                { name: '成都南站', type: 'rail', icon: '🚄', x: 46, y: 67, desc: '成绵乐城际等线路，地铁1号线/7号线可达。' }
+            ]},
+            { id: 'xian', name: '西安', x: 56.3, y: 51.7, category: 'capital', spots: [
+                { name: '兵马俑', x: 60, y: 25, icon: '⚔️', desc: '世界第八大奇迹，秦始皇陵博物馆，门票120元，游览约3小时。', tags: ['世界遗产', '考古', '必游'] },
+                { name: '大雁塔', x: 45, y: 55, icon: '🗼', desc: '唐代佛教建筑杰作，西安象征，晚上有音乐喷泉表演。', tags: ['佛教圣地', '夜景', '喷泉'] },
+                { name: '回民街', x: 30, y: 45, icon: '🍜', desc: '千年历史美食街，西北美食汇聚，肉夹馍羊肉泡馍必尝。', tags: ['美食街', '夜市', '小吃'] },
+                { name: '大唐不夜城', x: 55, y: 65, icon: '🏮', desc: '仿唐建筑步行街，灯光秀美轮美奂，网红打卡地。', tags: ['夜景', '网红', '免费'] },
+                { name: '古城墙', x: 40, y: 35, icon: '🏰', desc: '中国现存最完整的古城墙，可骑行环城，全长13.7公里。', tags: ['古建筑', '骑行', '日落'] },
+                { name: '陕西历史博物馆', x: 50, y: 50, icon: '🏛️', desc: '中国第一座大型现代化博物馆，免费但需提前预约。', tags: ['博物馆', '免费', '预约'] }
+            ], transport: [
+                { name: '咸阳国际机场', type: 'airport', icon: '✈️', x: 54, y: 49, desc: '西安主要机场，距市区约25km，地铁14号线可达。' },
+                { name: '西安北站', type: 'rail', icon: '🚄', x: 59, y: 52, desc: '高铁枢纽，郑西高铁、大西高铁始发站。' },
+                { name: '西安站', type: 'rail', icon: '🚄', x: 55, y: 53, desc: '普速列车主要车站，地铁1号线可达。' }
+            ]},
+            { id: 'hangzhou', name: '杭州', x: 73.8, y: 70.0, category: 'capital', spots: [
+                { name: '西湖', x: 40, y: 45, icon: '🏞️', desc: '中国著名风景名胜，免费开放，断桥残雪雷峰夕照最著名。', tags: ['世界遗产', '自然风光', '免费'] },
+                { name: '灵隐寺', x: 25, y: 30, icon: '⛩️', desc: '千年古刹，济公出家之地，飞来峰石窟造像精美。', tags: ['佛教圣地', '祈福', '古刹'] },
+                { name: '河坊街', x: 65, y: 60, icon: '🏪', desc: '清末民初风格历史街区，购物品尝小吃好去处。', tags: ['古街', '购物', '美食'] },
+                { name: '宋城', x: 75, y: 70, icon: '🎭', desc: '大型主题公园，宋城千古情演出震撼，门票约300元。', tags: ['主题公园', '演出', '亲子'] },
+                { name: '龙井村', x: 30, y: 55, icon: '🍵', desc: '龙井茶原产地，茶园风光，可品尝正宗龙井茶。', tags: ['茶园', '品茶', '自然'] }
+            ], transport: [
+                { name: '萧山国际机场', type: 'airport', icon: '✈️', x: 76, y: 72, desc: '杭州主要机场，距市区约27km，地铁1号线/7号线可达。' },
+                { name: '杭州东站', type: 'rail', icon: '🚄', x: 72, y: 69, desc: '高铁枢纽，沪昆高铁、宁杭高铁始发站。' },
+                { name: '杭州站', type: 'rail', icon: '🚄', x: 73, y: 71, desc: '沪昆铁路等线路，地铁1号线可达。' }
+            ]},
+            { id: 'nanjing', name: '南京', x: 69.4, y: 57.5, category: 'capital', spots: [
+                { name: '中山陵', x: 55, y: 30, icon: '🏛️', desc: '孙中山先生陵墓，庄严肃穆，需爬392级台阶。', tags: ['历史名胜', '免费', '预约'] },
+                { name: '夫子庙秦淮河', x: 40, y: 55, icon: '🏮', desc: '六朝古都风韵，晚上秦淮河灯光很美，画舫游船。', tags: ['古街', '夜景', '游船'] },
+                { name: '总统府', x: 30, y: 45, icon: '🏢', desc: '近代史博物馆，民国建筑群，了解近代历史。', tags: ['历史建筑', '博物馆', '民国'] },
+                { name: '南京博物院', x: 50, y: 65, icon: '🏛️', desc: '中国三大博物馆之一，免费但需提前预约。', tags: ['博物馆', '免费', '预约'] },
+                { name: '玄武湖', x: 45, y: 40, icon: '🌊', desc: '江南三大名湖之一，环湖骑行散步，免费开放。', tags: ['自然风光', '免费', '休闲'] }
+            ], transport: [
+                { name: '禄口国际机场', type: 'airport', icon: '✈️', x: 72, y: 59, desc: '南京主要机场，距市区约35km，地铁S1号线可达。' },
+                { name: '南京南站', type: 'rail', icon: '🚄', x: 68, y: 58, desc: '高铁枢纽，京沪高铁、沪汉蓉高铁始发站。' },
+                { name: '南京站', type: 'rail', icon: '🚄', x: 70, y: 56, desc: '沪宁城际等线路，地铁1号线/3号线可达。' }
+            ]},
+            { id: 'wuhan', name: '武汉', x: 62.5, y: 60.5, category: 'capital', spots: [
+                { name: '黄鹤楼', x: 50, y: 45, icon: '🏯', desc: '天下江山第一楼，武汉地标，俯瞰长江美景。', tags: ['地标', '历史', '必游'] },
+                { name: '东湖', x: 65, y: 35, icon: '🌊', desc: '中国最大城中湖，绿道骑行，磨山樱花园。', tags: ['自然风光', '骑行', '免费'] },
+                { name: '户部巷', x: 45, y: 55, icon: '🍜', desc: '汉味小吃第一巷，热干面豆皮鸭脖必尝。', tags: ['美食街', '小吃', '过早'] },
+                { name: '湖北省博物馆', x: 40, y: 40, icon: '🏛️', desc: '越王勾践剑、曾侯乙编钟，免费需预约。', tags: ['博物馆', '免费', '国宝'] },
+                { name: '江汉路步行街', x: 55, y: 60, icon: '🛍️', desc: '百年商业老街，欧式建筑群，购物美食中心。', tags: ['购物', '美食', '历史'] }
+            ], transport: [
+                { name: '天河国际机场', type: 'airport', icon: '✈️', x: 65, y: 62, desc: '武汉主要机场，地铁2号线可达。' },
+                { name: '武汉站', type: 'rail', icon: '🚄', x: 64, y: 59, desc: '高铁枢纽，京广高铁始发站。' },
+                { name: '汉口站', type: 'rail', icon: '🚄', x: 61, y: 61, desc: '沪汉蓉高铁等重要线路。' }
+            ]},
+            { id: 'zhengzhou', name: '郑州', x: 60.5, y: 52.5, category: 'capital', spots: [
+                { name: '少林寺', x: 35, y: 30, icon: '⛩️', desc: '天下第一名刹，少林功夫发源地，距市区约80km。', tags: ['佛教', '功夫', '必游'] },
+                { name: '河南博物院', x: 50, y: 50, icon: '🏛️', desc: '华夏文明宝库，九大镇馆之宝，免费需预约。', tags: ['博物馆', '免费', '国宝'] },
+                { name: '二七纪念塔', x: 55, y: 60, icon: '🗼', desc: '郑州地标，纪念京汉铁路工人大罢工。', tags: ['地标', '历史', '免费'] },
+                { name: '嵩山', x: 40, y: 25, icon: '⛰️', desc: '五岳之中岳，少林寺所在地，可徒步登山。', tags: ['名山', '登山', '世界遗产'] }
+            ], transport: [
+                { name: '新郑国际机场', type: 'airport', icon: '✈️', x: 63, y: 54, desc: '郑州主要机场，地铁城郊线可达。' },
+                { name: '郑州东站', type: 'rail', icon: '🚄', x: 62, y: 53, desc: '全国最大高铁站之一，米字形高铁枢纽。' },
+                { name: '郑州站', type: 'rail', icon: '🚄', x: 59, y: 54, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'changsha', name: '长沙', x: 59.5, y: 72.5, category: 'capital', spots: [
+                { name: '橘子洲', x: 50, y: 55, icon: '🍊', desc: '毛主席青年雕像，湘江风光带，烟花表演。', tags: ['地标', '免费', '夜景'] },
+                { name: '岳麓山', x: 35, y: 40, icon: '⛰️', desc: '岳麓书院爱晚亭，登山俯瞰长沙全景。', tags: ['名山', '古迹', '免费'] },
+                { name: '太平老街', x: 55, y: 60, icon: '🏮', desc: '千年老街，臭豆腐茶颜悦色，网红打卡地。', tags: ['美食街', '网红', '小吃'] },
+                { name: '湖南省博物馆', x: 45, y: 50, icon: '🏛️', desc: '马王堆汉墓辛追夫人，免费需预约。', tags: ['博物馆', '免费', '国宝'] },
+                { name: '世界之窗', x: 65, y: 45, icon: '🎡', desc: '大型主题公园，各国建筑微缩景观。', tags: ['主题乐园', '亲子', '拍照'] }
+            ], transport: [
+                { name: '黄花国际机场', type: 'airport', icon: '✈️', x: 62, y: 74, desc: '长沙主要机场，地铁6号线/磁悬浮可达。' },
+                { name: '长沙南站', type: 'rail', icon: '🚄', x: 61, y: 73, desc: '高铁枢纽，京广高铁、沪昆高铁交汇。' },
+                { name: '长沙站', type: 'rail', icon: '🚄', x: 58, y: 73, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'fuzhou', name: '福州', x: 74.5, y: 78.5, category: 'capital', spots: [
+                { name: '三坊七巷', x: 50, y: 50, icon: '🏘️', desc: '明清建筑博物馆，林则徐严复故居，免费。', tags: ['古街', '历史', '免费'] },
+                { name: '鼓山', x: 60, y: 35, icon: '⛰️', desc: '福州名山，涌泉寺摩崖石刻，俯瞰全城。', tags: ['名山', '佛教', '免费'] },
+                { name: '西湖公园', x: 40, y: 45, icon: '🌊', desc: '福州西湖，古典园林，休闲散步好去处。', tags: ['公园', '免费', '休闲'] },
+                { name: '平潭岛', x: 80, y: 70, icon: '🏝️', desc: '福建第一大岛，蓝眼泪奇观，距市区约100km。', tags: ['海岛', '自然奇观', '摄影'] }
+            ], transport: [
+                { name: '长乐国际机场', type: 'airport', icon: '✈️', x: 77, y: 80, desc: '福州主要机场，机场大巴可达。' },
+                { name: '福州站', type: 'rail', icon: '🚄', x: 73, y: 79, desc: '高铁枢纽，温福高铁、福厦高铁始发站。' },
+                { name: '福州南站', type: 'rail', icon: '🚄', x: 76, y: 80, desc: '高铁站，地铁1号线可达。' }
+            ]},
+            { id: 'hefei', name: '合肥', x: 68.5, y: 55.5, category: 'capital', spots: [
+                { name: '包公园', x: 50, y: 50, icon: '🌳', desc: '纪念包拯的园林，包公祠清风阁，免费。', tags: ['园林', '历史', '免费'] },
+                { name: '三河古镇', x: 35, y: 65, icon: '🏘️', desc: '千年水乡古镇，徽派建筑，距市区约40km。', tags: ['古镇', '水乡', '美食'] },
+                { name: '安徽省博物馆', x: 55, y: 40, icon: '🏛️', desc: '徽派文化展示，免费需预约。', tags: ['博物馆', '免费', '文化'] },
+                { name: '逍遥津公园', x: 45, y: 55, icon: '🎠', desc: '合肥老牌公园，张辽威震逍遥津古战场。', tags: ['公园', '免费', '历史'] }
+            ], transport: [
+                { name: '新桥国际机场', type: 'airport', icon: '✈️', x: 71, y: 57, desc: '合肥主要机场，机场大巴可达。' },
+                { name: '合肥南站', type: 'rail', icon: '🚄', x: 70, y: 56, desc: '高铁枢纽，沪汉蓉高铁、京福高铁交汇。' },
+                { name: '合肥站', type: 'rail', icon: '🚄', x: 67, y: 56, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'nanchang', name: '南昌', x: 66.5, y: 70.5, category: 'capital', spots: [
+                { name: '滕王阁', x: 50, y: 45, icon: '🏯', desc: '江南三大名楼，落霞与孤鹜齐飞，夜景绝美。', tags: ['地标', '历史', '必游'] },
+                { name: '八一广场', x: 55, y: 55, icon: '⭐', desc: '南昌市中心，八一起义纪念塔，购物商圈。', tags: ['地标', '免费', '购物'] },
+                { name: '鄱阳湖', x: 40, y: 35, icon: '🌊', desc: '中国最大淡水湖，候鸟天堂，冬季观鸟最佳。', tags: ['自然', '观鸟', '生态'] },
+                { name: '绳金塔', x: 45, y: 60, icon: '🗼', desc: '千年古塔，南昌地标，美食街在旁。', tags: ['古建筑', '美食', '历史'] }
+            ], transport: [
+                { name: '昌北国际机场', type: 'airport', icon: '✈️', x: 69, y: 72, desc: '南昌主要机场，机场大巴可达。' },
+                { name: '南昌西站', type: 'rail', icon: '🚄', x: 68, y: 71, desc: '高铁枢纽，沪昆高铁、京九高铁交汇。' },
+                { name: '南昌站', type: 'rail', icon: '🚄', x: 65, y: 71, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'jinan', name: '济南', x: 67.5, y: 48.5, category: 'capital', spots: [
+                { name: '趵突泉', x: 50, y: 50, icon: '💧', desc: '天下第一泉，济南三大名胜之首，泉水清澈。', tags: ['名胜', '泉水', '必游'] },
+                { name: '大明湖', x: 55, y: 40, icon: '🌊', desc: '四面荷花三面柳，一城山色半城湖，免费。', tags: ['湖泊', '免费', '休闲'] },
+                { name: '千佛山', x: 60, y: 60, icon: '⛰️', desc: '济南三大名胜之一，佛教名山，俯瞰泉城。', tags: ['名山', '佛教', '登山'] },
+                { name: '芙蓉街', x: 45, y: 55, icon: '🍜', desc: '济南老街，小吃聚集地，油旋甜沫必尝。', tags: ['美食街', '小吃', '老街'] }
+            ], transport: [
+                { name: '遥墙国际机场', type: 'airport', icon: '✈️', x: 70, y: 50, desc: '济南主要机场，机场大巴可达。' },
+                { name: '济南西站', type: 'rail', icon: '🚄', x: 69, y: 49, desc: '高铁枢纽，京沪高铁重要站点。' },
+                { name: '济南站', type: 'rail', icon: '🚄', x: 66, y: 49, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'taiyuan', name: '太原', x: 58.5, y: 45.5, category: 'capital', spots: [
+                { name: '晋祠', x: 40, y: 50, icon: '🏛️', desc: '中国现存最早皇家园林，晋祠三绝，距市区约25km。', tags: ['古迹', '园林', '必游'] },
+                { name: '双塔寺', x: 55, y: 55, icon: '🗼', desc: '太原地标，明代双塔，可登塔俯瞰。', tags: ['地标', '古建筑', '登山'] },
+                { name: '山西博物院', x: 50, y: 40, icon: '🏛️', desc: '晋魂展览，青铜器精品，免费需预约。', tags: ['博物馆', '免费', '国宝'] },
+                { name: '柳巷', x: 45, y: 60, icon: '🛍️', desc: '太原最繁华商业街，美食购物聚集地。', tags: ['购物', '美食', '繁华'] }
+            ], transport: [
+                { name: '武宿国际机场', type: 'airport', icon: '✈️', x: 61, y: 47, desc: '太原主要机场，机场大巴可达。' },
+                { name: '太原南站', type: 'rail', icon: '🚄', x: 60, y: 46, desc: '高铁枢纽，大西高铁、石太高铁交汇。' },
+                { name: '太原站', type: 'rail', icon: '🚄', x: 57, y: 46, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'shijiazhuang', name: '石家庄', x: 62.5, y: 46.5, category: 'capital', spots: [
+                { name: '赵州桥', x: 45, y: 60, icon: '🌉', desc: '世界最古老石拱桥，1400年历史，距市区约40km。', tags: ['古迹', '桥梁', '必游'] },
+                { name: '西柏坡', x: 55, y: 35, icon: '⭐', desc: '革命圣地，中共中央旧址，红色旅游经典。', tags: ['红色', '历史', '教育'] },
+                { name: '正定古城', x: 50, y: 45, icon: '🏰', desc: '千年古城，九楼四塔八大庙，距市区约15km。', tags: ['古城', '古建筑', '免费'] },
+                { name: '河北博物院', x: 50, y: 55, icon: '🏛️', desc: '满城汉墓长信宫灯，免费需预约。', tags: ['博物馆', '免费', '国宝'] }
+            ], transport: [
+                { name: '正定国际机场', type: 'airport', icon: '✈️', x: 65, y: 48, desc: '石家庄主要机场，机场大巴可达。' },
+                { name: '石家庄站', type: 'rail', icon: '🚄', x: 64, y: 47, desc: '高铁枢纽，京广高铁重要站点。' }
+            ]},
+            { id: 'shenyang', name: '沈阳', x: 74.5, y: 32.5, category: 'capital', spots: [
+                { name: '沈阳故宫', x: 50, y: 50, icon: '🏛️', desc: '中国仅存两大皇宫之一，清朝入关前皇宫。', tags: ['世界遗产', '皇宫', '必游'] },
+                { name: '张氏帅府', x: 55, y: 55, icon: '🏰', desc: '张作霖张学良父子官邸，民国建筑典范。', tags: ['历史', '民国', '建筑'] },
+                { name: '九一八历史博物馆', x: 45, y: 40, icon: '🏛️', desc: '铭记历史，勿忘国耻，爱国主义教育基地。', tags: ['博物馆', '历史', '教育'] },
+                { name: '中街', x: 50, y: 60, icon: '🛍️', desc: '中国第一条商业步行街，购物美食中心。', tags: ['购物', '美食', '繁华'] }
+            ], transport: [
+                { name: '桃仙国际机场', type: 'airport', icon: '✈️', x: 77, y: 34, desc: '沈阳主要机场，地铁2号线可达。' },
+                { name: '沈阳站', type: 'rail', icon: '🚄', x: 76, y: 33, desc: '高铁枢纽，哈大高铁重要站点。' },
+                { name: '沈阳北站', type: 'rail', icon: '🚄', x: 73, y: 33, desc: '高铁站。' }
+            ]},
+            { id: 'changchun', name: '长春', x: 77.5, y: 28.5, category: 'capital', spots: [
+                { name: '伪满皇宫', x: 50, y: 50, icon: '🏛️', desc: '末代皇帝溥仪皇宫，近代历史见证。', tags: ['历史', '皇宫', '教育'] },
+                { name: '长影世纪城', x: 60, y: 60, icon: '🎬', desc: '东方好莱坞，电影主题公园。', tags: ['影视', '亲子', '娱乐'] },
+                { name: '净月潭', x: 45, y: 35, icon: '🌊', desc: '亚洲最大人工林海，滑雪徒步好去处。', tags: ['自然', '滑雪', '休闲'] },
+                { name: '南湖公园', x: 55, y: 45, icon: '🌳', desc: '全国第二大市内公园，夏季避暑胜地。', tags: ['公园', '免费', '休闲'] }
+            ], transport: [
+                { name: '龙嘉国际机场', type: 'airport', icon: '✈️', x: 80, y: 30, desc: '长春主要机场，高铁龙嘉站可达。' },
+                { name: '长春站', type: 'rail', icon: '🚄', x: 79, y: 29, desc: '高铁枢纽，哈大高铁重要站点。' },
+                { name: '长春西站', type: 'rail', icon: '🚄', x: 76, y: 29, desc: '高铁站。' }
+            ]},
+            { id: 'harbin', name: '哈尔滨', x: 80.5, y: 24.5, category: 'capital', spots: [
+                { name: '中央大街', x: 50, y: 50, icon: '🏛️', desc: '亚洲第一街，欧式建筑，马迭尔冰棍必尝。', tags: ['地标', '美食', '建筑'] },
+                { name: '冰雪大世界', x: 45, y: 35, icon: '❄️', desc: '世界最大冰雪主题乐园，冬季必游。', tags: ['冰雪', '冬季', '必游'] },
+                { name: '圣索菲亚教堂', x: 55, y: 55, icon: '⛪', desc: '拜占庭式建筑，哈尔滨地标，夜景绝美。', tags: ['地标', '建筑', '夜景'] },
+                { name: '太阳岛', x: 40, y: 40, icon: '🌳', desc: '松花江中岛屿，夏季避暑冬季雪博会。', tags: ['自然', '休闲', '免费'] }
+            ], transport: [
+                { name: '太平国际机场', type: 'airport', icon: '✈️', x: 83, y: 26, desc: '哈尔滨主要机场，机场大巴可达。' },
+                { name: '哈尔滨站', type: 'rail', icon: '🚄', x: 82, y: 25, desc: '高铁枢纽，哈大高铁、哈齐高铁交汇。' },
+                { name: '哈尔滨西站', type: 'rail', icon: '🚄', x: 79, y: 25, desc: '高铁站。' }
+            ]},
+            { id: 'haikou', name: '海口', x: 58.5, y: 92.5, category: 'capital', spots: [
+                { name: '骑楼老街', x: 50, y: 50, icon: '🏛️', desc: '南洋风情骑楼建筑，海口历史名片。', tags: ['历史', '建筑', '免费'] },
+                { name: '假日海滩', x: 45, y: 60, icon: '🏖️', desc: '海口最美海滩，游泳烧烤看日落。', tags: ['海滩', '免费', '休闲'] },
+                { name: '火山口公园', x: 55, y: 40, icon: '🌋', desc: '世界地质公园，火山遗迹探秘。', tags: ['地质', '自然', '登山'] },
+                { name: '五公祠', x: 50, y: 45, icon: '🏛️', desc: '海南第一楼，纪念唐宋名臣。', tags: ['历史', '古迹', '文化'] }
+            ], transport: [
+                { name: '美兰国际机场', type: 'airport', icon: '✈️', x: 61, y: 94, desc: '海口主要机场，高铁美兰站可达。' },
+                { name: '海口站', type: 'rail', icon: '🚄', x: 57, y: 93, desc: '环岛高铁重要站点。' }
+            ]},
+            { id: 'nanning', name: '南宁', x: 52.5, y: 88.5, category: 'capital', spots: [
+                { name: '青秀山', x: 55, y: 45, icon: '⛰️', desc: '南宁绿肺，龙象塔俯瞰全城，热带植物园。', tags: ['自然', '登山', '休闲'] },
+                { name: '南湖公园', x: 50, y: 55, icon: '🌊', desc: '市中心最大湖泊，环湖步道，免费。', tags: ['公园', '免费', '休闲'] },
+                { name: '广西民族博物馆', x: 45, y: 40, icon: '🏛️', desc: '壮族文化展示，铜鼓文化，免费。', tags: ['博物馆', '免费', '文化'] },
+                { name: '中山路美食街', x: 50, y: 60, icon: '🍜', desc: '南宁最热闹夜市，老友粉螺蛳粉必尝。', tags: ['美食街', '夜市', '小吃'] }
+            ], transport: [
+                { name: '吴圩国际机场', type: 'airport', icon: '✈️', x: 55, y: 90, desc: '南宁主要机场，机场大巴可达。' },
+                { name: '南宁东站', type: 'rail', icon: '🚄', x: 54, y: 89, desc: '高铁枢纽，南广高铁、云桂高铁交汇。' },
+                { name: '南宁站', type: 'rail', icon: '🚄', x: 51, y: 89, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'guiyang', name: '贵阳', x: 48.5, y: 75.5, category: 'capital', spots: [
+                { name: '黔灵山公园', x: 50, y: 45, icon: '⛰️', desc: '黔南第一山，弘福寺猴子，门票5元。', tags: ['自然', '佛教', '休闲'] },
+                { name: '甲秀楼', x: 55, y: 55, icon: '🏯', desc: '贵阳地标，明代建筑，夜景绝美，免费。', tags: ['地标', '夜景', '免费'] },
+                { name: '青岩古镇', x: 45, y: 65, icon: '🏘️', desc: '明清军事古镇，状元蹄美食，距市区约30km。', tags: ['古镇', '美食', '历史'] },
+                { name: '花溪公园', x: 40, y: 50, icon: '🌊', desc: '高原明珠，十里河滩，免费。', tags: ['自然', '免费', '休闲'] }
+            ], transport: [
+                { name: '龙洞堡国际机场', type: 'airport', icon: '✈️', x: 51, y: 77, desc: '贵阳主要机场，地铁2号线可达。' },
+                { name: '贵阳北站', type: 'rail', icon: '🚄', x: 50, y: 76, desc: '高铁枢纽，沪昆高铁、贵广高铁交汇。' },
+                { name: '贵阳站', type: 'rail', icon: '🚄', x: 47, y: 76, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'kunming', name: '昆明', x: 40.5, y: 80.5, category: 'capital', spots: [
+                { name: '滇池', x: 55, y: 60, icon: '🌊', desc: '云南最大淡水湖，冬季观海鸥，免费。', tags: ['湖泊', '观鸟', '免费'] },
+                { name: '石林', x: 65, y: 45, icon: '🪨', desc: '世界自然遗产，喀斯特地貌奇观，距市区约90km。', tags: ['自然奇观', '世界遗产', '必游'] },
+                { name: '翠湖公园', x: 50, y: 50, icon: '🌳', desc: '市中心绿宝石，冬季观鸥，免费。', tags: ['公园', '免费', '休闲'] },
+                { name: '云南民族村', x: 45, y: 65, icon: '🏘️', desc: '26个民族村寨，了解少数民族文化。', tags: ['文化', '民俗', '体验'] },
+                { name: '金马碧鸡坊', x: 50, y: 55, icon: '🏛️', desc: '昆明地标，商业中心，夜景繁华。', tags: ['地标', '购物', '夜景'] }
+            ], transport: [
+                { name: '长水国际机场', type: 'airport', icon: '✈️', x: 43, y: 82, desc: '昆明主要机场，机场大巴/地铁6号线可达。' },
+                { name: '昆明南站', type: 'rail', icon: '🚄', x: 42, y: 81, desc: '高铁枢纽，沪昆高铁、云桂高铁、昆楚大铁路交汇。' },
+                { name: '昆明站', type: 'rail', icon: '🚄', x: 39, y: 81, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'lanzhou', name: '兰州', x: 50.5, y: 48.5, category: 'capital', spots: [
+                { name: '黄河铁桥', x: 50, y: 50, icon: '🌉', desc: '中山桥，黄河第一桥，百年历史，免费。', tags: ['地标', '历史', '免费'] },
+                { name: '白塔山公园', x: 55, y: 45, icon: '⛰️', desc: '俯瞰黄河兰州全景，白塔寺古迹。', tags: ['登山', '观景', '免费'] },
+                { name: '甘肃省博物馆', x: 45, y: 55, icon: '🏛️', desc: '马踏飞燕铜奔马，丝路文化，免费需预约。', tags: ['博物馆', '免费', '国宝'] },
+                { name: '正宁路夜市', x: 50, y: 60, icon: '🍜', desc: '兰州最著名夜市，牛奶鸡蛋醪糟必尝。', tags: ['夜市', '美食', '小吃'] }
+            ], transport: [
+                { name: '中川国际机场', type: 'airport', icon: '✈️', x: 53, y: 50, desc: '兰州主要机场，高铁中川机场站可达。' },
+                { name: '兰州西站', type: 'rail', icon: '🚄', x: 52, y: 49, desc: '高铁枢纽，兰新高铁、宝兰高铁交汇。' },
+                { name: '兰州站', type: 'rail', icon: '🚄', x: 49, y: 49, desc: '普速列车主要车站。' }
+            ]},
+            { id: 'xining', name: '西宁', x: 45.5, y: 42.5, category: 'capital', spots: [
+                { name: '青海湖', x: 50, y: 35, icon: '🌊', desc: '中国最大咸水湖，油菜花海，距市区约150km。', tags: ['自然', '湖泊', '必游'] },
+                { name: '塔尔寺', x: 55, y: 60, icon: '⛩️', desc: '藏传佛教圣地，酥油花壁画堆绣，距市区约25km。', tags: ['佛教', '文化', '必游'] },
+                { name: '东关清真大寺', x: 50, y: 50, icon: '🕌', desc: '西北四大清真寺，伊斯兰建筑，免费。', tags: ['宗教', '建筑', '免费'] },
+                { name: '青海省博物馆', x: 45, y: 45, icon: '🏛️', desc: '青海历史文化，免费需预约。', tags: ['博物馆', '免费', '文化'] }
+            ], transport: [
+                { name: '曹家堡国际机场', type: 'airport', icon: '✈️', x: 48, y: 44, desc: '西宁主要机场，机场大巴可达。' },
+                { name: '西宁站', type: 'rail', icon: '🚄', x: 47, y: 43, desc: '高铁枢纽，兰新高铁重要站点。' }
+            ]},
+            { id: 'yinchuan', name: '银川', x: 52.5, y: 38.5, category: 'capital', spots: [
+                { name: '镇北堡西部影城', x: 45, y: 45, icon: '🎬', desc: '大话西游拍摄地，中国好莱坞，距市区约35km。', tags: ['影视', '拍照', '必游'] },
+                { name: '西夏王陵', x: 55, y: 55, icon: '🏛️', desc: '东方金字塔，西夏文化遗址，距市区约30km。', tags: ['历史', '古迹', '文化'] },
+                { name: '贺兰山岩画', x: 50, y: 35, icon: '🎨', desc: '远古岩画艺术，距市区约50km。', tags: ['历史', '艺术', '文化'] },
+                { name: '鼓楼', x: 50, y: 50, icon: '🥁', desc: '银川地标，明代建筑，市中心。', tags: ['地标', '历史', '免费'] }
+            ], transport: [
+                { name: '河东国际机场', type: 'airport', icon: '✈️', x: 55, y: 40, desc: '银川主要机场，机场大巴可达。' },
+                { name: '银川站', type: 'rail', icon: '🚄', x: 54, y: 39, desc: '高铁枢纽，银西高铁、包兰铁路交汇。' }
+            ]},
+            { id: 'urumqi', name: '乌鲁木齐', x: 30.5, y: 32.5, category: 'capital', spots: [
+                { name: '天山天池', x: 55, y: 35, icon: '🏔️', desc: '瑶池仙境，雪山湖泊，距市区约110km。', tags: ['自然', '湖泊', '必游'] },
+                { name: '大巴扎', x: 50, y: 55, icon: '🏛️', desc: '世界最大巴扎，维吾尔风情，购物美食。', tags: ['民俗', '购物', '美食'] },
+                { name: '红山公园', x: 45, y: 45, icon: '⛰️', desc: '乌鲁木齐地标，红山塔俯瞰全城，免费。', tags: ['公园', '免费', '观景'] },
+                { name: '新疆博物馆', x: 50, y: 50, icon: '🏛️', desc: '楼兰美女干尸，丝路文化，免费需预约。', tags: ['博物馆', '免费', '国宝'] }
+            ], transport: [
+                { name: '地窝堡国际机场', type: 'airport', icon: '✈️', x: 33, y: 34, desc: '乌鲁木齐主要机场，机场大巴可达。' },
+                { name: '乌鲁木齐站', type: 'rail', icon: '🚄', x: 32, y: 33, desc: '高铁枢纽，兰新高铁终点。' }
+            ]},
+            { id: 'lhasa', name: '拉萨', x: 25.5, y: 68.5, category: 'capital', spots: [
+                { name: '布达拉宫', x: 50, y: 45, icon: '🏰', desc: '世界海拔最高宫殿，藏传佛教圣地，需预约。', tags: ['世界遗产', '佛教', '必游'] },
+                { name: '大昭寺', x: 55, y: 55, icon: '⛩️', desc: '藏传佛教最神圣寺庙，八廓街转经。', tags: ['佛教', '圣地', '文化'] },
+                { name: '纳木错', x: 60, y: 30, icon: '🌊', desc: '天湖，世界海拔最高大湖，距市区约240km。', tags: ['自然', '湖泊', '必游'] },
+                { name: '罗布林卡', x: 45, y: 60, icon: '🌳', desc: '达赖喇嘛夏宫，园林建筑精美。', tags: ['园林', '历史', '文化'] }
+            ], transport: [
+                { name: '贡嘎国际机场', type: 'airport', icon: '✈️', x: 28, y: 70, desc: '拉萨主要机场，机场大巴可达，海拔最高机场之一。' },
+                { name: '拉萨站', type: 'rail', icon: '🚄', x: 27, y: 69, desc: '青藏铁路终点，高原铁路。' }
+            ]},
+            { id: 'huhehaote', name: '呼和浩特', x: 58.5, y: 38.5, category: 'capital', spots: [
+                { name: '大召寺', x: 50, y: 50, icon: '⛩️', desc: '明代藏传佛教寺庙，银佛龙雕壁画三绝。', tags: ['佛教', '历史', '文化'] },
+                { name: '内蒙古博物院', x: 55, y: 40, icon: '🏛️', desc: '草原文化，恐龙化石，免费需预约。', tags: ['博物馆', '免费', '文化'] },
+                { name: '昭君墓', x: 45, y: 60, icon: '🏛️', desc: '青冢，王昭君衣冠冢，距市区约10km。', tags: ['历史', '古迹', '文化'] },
+                { name: '伊斯兰风情街', x: 50, y: 55, icon: '🕌', desc: '穆斯林建筑风情，美食聚集地。', tags: ['民俗', '美食', '建筑'] }
+            ], transport: [
+                { name: '白塔国际机场', type: 'airport', icon: '✈️', x: 61, y: 40, desc: '呼和浩特主要机场，机场大巴可达。' },
+                { name: '呼和浩特东站', type: 'rail', icon: '🚄', x: 60, y: 39, desc: '高铁枢纽，京包高铁、呼张高铁交汇。' },
+                { name: '呼和浩特站', type: 'rail', icon: '🚄', x: 57, y: 39, desc: '普速列车主要车站。' }
+            ]},
+
+            // 热门旅行城市
+            { id: 'shenzhen', name: '深圳', x: 66.5, y: 89.5, category: 'popular', spots: [
+                { name: '世界之窗', x: 45, y: 45, icon: '🌍', desc: '世界著名景点微缩，一日游遍全球。', tags: ['主题公园', '亲子', '拍照'] },
+                { name: '欢乐谷', x: 55, y: 55, icon: '🎢', desc: '大型主题乐园，刺激游乐设施。', tags: ['主题乐园', '刺激', '娱乐'] },
+                { name: '大梅沙海滩', x: 60, y: 65, icon: '🏖️', desc: '深圳最美海滩，免费预约入园。', tags: ['海滩', '免费', '休闲'] },
+                { name: '平安金融中心', x: 50, y: 50, icon: '🏢', desc: '深圳第一高楼，观光层俯瞰全城。', tags: ['地标', '观光', '夜景'] },
+                { name: '东门老街', x: 40, y: 60, icon: '🛍️', desc: '深圳最繁华商业街，购物美食天堂。', tags: ['购物', '美食', '繁华'] }
+            ], transport: [
+                { name: '宝安国际机场', type: 'airport', icon: '✈️', x: 69, y: 91, desc: '深圳主要机场，地铁11号线可达。' },
+                { name: '深圳北站', type: 'rail', icon: '🚄', x: 68, y: 90, desc: '高铁枢纽，广深港高铁重要站点。' },
+                { name: '福田站', type: 'rail', icon: '🚄', x: 65, y: 90, desc: '高铁站，地铁2号线/3号线/11号线可达。' }
+            ]},
+            { id: 'sanya', name: '三亚', x: 55.5, y: 95.5, category: 'popular', spots: [
+                { name: '亚龙湾', x: 55, y: 55, icon: '🏖️', desc: '天下第一湾，最美海滩，高端度假区。', tags: ['海滩', '度假', '必游'] },
+                { name: '天涯海角', x: 45, y: 65, icon: '🌅', desc: '海南标志性景点，浪漫打卡地。', tags: ['地标', '浪漫', '拍照'] },
+                { name: '南山寺', x: 60, y: 45, icon: '⛩️', desc: '108米海上观音，佛教文化景区。', tags: ['佛教', '文化', '必游'] },
+                { name: '蜈支洲岛', x: 65, y: 50, icon: '🏝️', desc: '中国马尔代夫，潜水胜地，需乘船。', tags: ['海岛', '潜水', '度假'] },
+                { name: '大小洞天', x: 50, y: 40, icon: '🏔️', desc: '道教文化风景区，海景山景俱佳。', tags: ['自然', '文化', '摄影'] }
+            ], transport: [
+                { name: '凤凰国际机场', type: 'airport', icon: '✈️', x: 58, y: 97, desc: '三亚主要机场，机场大巴可达。' },
+                { name: '三亚站', type: 'rail', icon: '🚄', x: 56, y: 96, desc: '环岛高铁重要站点。' }
+            ]},
+            { id: 'lijiang', name: '丽江', x: 43.1, y: 73.3, category: 'popular', spots: [
+                { name: '丽江古城', x: 40, y: 50, icon: '🏘️', desc: '世界遗产，纳西族文化发源地，小桥流水古朴典雅。', tags: ['世界遗产', '古城', '免费'] },
+                { name: '玉龙雪山', x: 60, y: 25, icon: '❄️', desc: '北半球最南端雪山，需提前订票，注意高原反应。', tags: ['雪山', '自然奇观', '必游'] },
+                { name: '束河古镇', x: 25, y: 35, icon: '🏡', desc: '比丽江古城更宁静古朴，适合发呆放松。', tags: ['古镇', '宁静', '文艺'] },
+                { name: '蓝月谷', x: 70, y: 35, icon: '💎', desc: '玉龙雪山脚下，湖水蓝如宝石，拍照绝美。', tags: ['自然风光', '拍照', '免费'] },
+                { name: '泸沽湖', x: 15, y: 45, icon: '🌊', desc: '高原明珠，摩梭人母系文化，距离较远需一日游。', tags: ['高原湖泊', '民族风情', '一日游'] }
+            ], transport: [
+                { name: '三义国际机场', type: 'airport', icon: '✈️', x: 45, y: 72, desc: '丽江主要机场，距市区约28km，机场大巴/出租车可达。' },
+                { name: '丽江站', type: 'rail', icon: '🚄', x: 42, y: 75, desc: '滇藏铁路丽江站，可通达大理、昆明。' }
+            ]},
+            { id: 'dali', name: '大理', x: 38.5, y: 78.5, category: 'popular', spots: [
+                { name: '洱海', x: 55, y: 50, icon: '🌊', desc: '高原明珠，环湖骑行，苍山洱海风光。', tags: ['湖泊', '骑行', '必游'] },
+                { name: '大理古城', x: 45, y: 45, icon: '🏘️', desc: '南诏国故都，洋人街，文艺气息浓厚。', tags: ['古城', '文艺', '免费'] },
+                { name: '崇圣寺三塔', x: 50, y: 35, icon: '🗼', desc: '大理地标，千年古塔，苍山脚下。', tags: ['地标', '佛教', '历史'] },
+                { name: '苍山', x: 60, y: 40, icon: '⛰️', desc: '云岭山脉南端，洗马潭索道，俯瞰洱海。', tags: ['自然', '登山', '观景'] },
+                { name: '双廊', x: 65, y: 55, icon: '🏘️', desc: '洱海东岸小镇，杨丽萍太阳宫，拍照圣地。', tags: ['小镇', '拍照', '文艺'] }
+            ], transport: [
+                { name: '大理机场', type: 'airport', icon: '✈️', x: 41, y: 80, desc: '大理主要机场，距市区约13km。' },
+                { name: '大理站', type: 'rail', icon: '🚄', x: 40, y: 79, desc: '高铁站，昆楚大铁路重要站点。' }
+            ]},
+            { id: 'guilin', name: '桂林', x: 58.8, y: 79.2, category: 'popular', spots: [
+                { name: '漓江', x: 50, y: 35, icon: '🚣', desc: '桂林山水精华，竹筏漂流是必体验项目，如诗如画。', tags: ['山水画卷', '漂流', '必游'] },
+                { name: '阳朔西街', x: 70, y: 55, icon: '🌙', desc: '中西合璧古镇，背包客天堂，夜生活丰富。', tags: ['古镇', '夜生活', '文艺'] },
+                { name: '象鼻山', x: 30, y: 50, icon: '🐘', desc: '桂林城徽，山形酷似象鼻，适合拍照打卡。', tags: ['地标', '自然奇观', '拍照'] },
+                { name: '十里画廊', x: 60, y: 70, icon: '🎨', desc: '阳朔最美骑行路线，田园风光，租电动车游览。', tags: ['骑行', '田园', '免费'] },
+                { name: '龙脊梯田', x: 20, y: 30, icon: '🌾', desc: '世界梯田之冠，壮瑶族风情，四季景色各异。', tags: ['梯田', '民族风情', '摄影'] }
+            ], transport: [
+                { name: '两江国际机场', type: 'airport', icon: '✈️', x: 61, y: 81, desc: '桂林主要机场，距市区约28km，机场大巴可达市区。' },
+                { name: '桂林站', type: 'rail', icon: '🚄', x: 57, y: 80, desc: '湘桂铁路主要车站，可通达南宁、柳州等地。' },
+                { name: '阳朔站', type: 'rail', icon: '🚄', x: 61, y: 78, desc: '高铁站，距阳朔县城约40km，需换乘大巴。' }
+            ]},
+            { id: 'xiamen', name: '厦门', x: 71.3, y: 83.3, category: 'popular', spots: [
+                { name: '鼓浪屿', x: 45, y: 40, icon: '🏝️', desc: '钢琴之岛，万国建筑博览，需乘船前往，建议早上。', tags: ['海岛', '文艺', '世界遗产'] },
+                { name: '厦门大学', x: 60, y: 55, icon: '🏫', desc: '最美大学，芙蓉湖畔，芙蓉隧道必打卡，需预约。', tags: ['校园', '拍照', '免费'] },
+                { name: '曾厝垵', x: 30, y: 60, icon: '🏘️', desc: '文艺渔村，小吃天堂，晚上热闹。', tags: ['文艺村', '美食', '夜市'] },
+                { name: '环岛路', x: 50, y: 70, icon: '🚴', desc: '最美海滨骑行路线，沙滩海景，免费开放。', tags: ['骑行', '海滩', '免费'] },
+                { name: '南普陀寺', x: 55, y: 50, icon: '⛩️', desc: '闽南佛教圣地，素饼闻名，免费。', tags: ['佛教', '免费', '文化'] }
+            ], transport: [
+                { name: '高崎国际机场', type: 'airport', icon: '✈️', x: 74, y: 85, desc: '厦门主要机场，地铁1号线可达。' },
+                { name: '厦门站', type: 'rail', icon: '🚄', x: 72, y: 84, desc: '高铁站，福厦高铁重要站点。' },
+                { name: '厦门北站', type: 'rail', icon: '🚄', x: 75, y: 82, desc: '高铁站，地铁1号线可达。' }
+            ]},
+            { id: 'qingdao', name: '青岛', x: 72.5, y: 52.5, category: 'popular', spots: [
+                { name: '栈桥', x: 50, y: 55, icon: '🌉', desc: '青岛地标，百年栈桥，回澜阁，免费。', tags: ['地标', '海景', '免费'] },
+                { name: '八大关', x: 45, y: 45, icon: '🏛️', desc: '万国建筑博览会，花石楼公主楼，最美街道。', tags: ['建筑', '拍照', '免费'] },
+                { name: '崂山', x: 60, y: 35, icon: '⛰️', desc: '海上名山第一，道教名山，距市区约40km。', tags: ['名山', '道教', '海景'] },
+                { name: '五四广场', x: 55, y: 50, icon: '🔥', desc: '青岛地标，五月的风雕塑，夜景灯光秀。', tags: ['地标', '夜景', '免费'] },
+                { name: '啤酒博物馆', x: 40, y: 50, icon: '🍺', desc: '青岛啤酒历史，免费品尝原浆啤酒。', tags: ['博物馆', '美食', '体验'] }
+            ], transport: [
+                { name: '流亭国际机场', type: 'airport', icon: '✈️', x: 75, y: 54, desc: '青岛主要机场，机场大巴可达。' },
+                { name: '青岛站', type: 'rail', icon: '🚄', x: 74, y: 53, desc: '高铁站，胶济铁路重要站点。' },
+                { name: '青岛北站', type: 'rail', icon: '🚄', x: 73, y: 51, desc: '高铁站。' }
+            ]},
+            { id: 'dalian', name: '大连', x: 76.5, y: 40.5, category: 'popular', spots: [
+                { name: '星海广场', x: 50, y: 55, icon: '⭐', desc: '亚洲最大城市广场，海景喷泉，免费。', tags: ['地标', '海景', '免费'] },
+                { name: '老虎滩', x: 60, y: 50, icon: '🐯', desc: '海洋公园，极地馆珊瑚馆，亲子游首选。', tags: ['海洋', '亲子', '娱乐'] },
+                { name: '金石滩', x: 65, y: 60, icon: '🪨', desc: '地质奇观，黄金海岸，距市区约50km。', tags: ['自然', '海滩', '地质'] },
+                { name: '棒棰岛', x: 55, y: 45, icon: '🏝️', desc: '国宾馆所在地，最美海滩，环境清幽。', tags: ['海滩', '度假', '风景'] },
+                { name: '俄罗斯风情街', x: 45, y: 50, icon: '🏛️', desc: '俄式建筑群，历史街区，拍照打卡。', tags: ['建筑', '历史', '拍照'] }
+            ], transport: [
+                { name: '周水子国际机场', type: 'airport', icon: '✈️', x: 79, y: 42, desc: '大连主要机场，机场大巴可达。' },
+                { name: '大连站', type: 'rail', icon: '🚄', x: 78, y: 41, desc: '高铁枢纽，哈大高铁重要站点。' },
+                { name: '大连北站', type: 'rail', icon: '🚄', x: 77, y: 39, desc: '高铁站。' }
+            ]},
+            { id: 'suzhou', name: '苏州', x: 75.5, y: 61.5, category: 'popular', spots: [
+                { name: '拙政园', x: 50, y: 45, icon: '🏞️', desc: '中国四大名园之首，江南园林典范，世界遗产。', tags: ['园林', '世界遗产', '必游'] },
+                { name: '虎丘', x: 45, y: 35, icon: '🗼', desc: '吴中第一名胜，斜塔剑池，苏轼赞誉。', tags: ['名胜', '历史', '必游'] },
+                { name: '周庄', x: 60, y: 65, icon: '🏘️', desc: '中国第一水乡，双桥沈厅，距市区约40km。', tags: ['水乡', '古镇', '必游'] },
+                { name: '山塘街', x: 55, y: 55, icon: '🏮', desc: '七里山塘，姑苏第一名街，夜景绝美。', tags: ['古街', '夜景', '免费'] },
+                { name: '金鸡湖', x: 65, y: 50, icon: '🌊', desc: '苏州新地标，东方之门，现代苏州代表。', tags: ['现代', '夜景', '免费'] }
+            ], transport: [
+                { name: '苏南硕放机场', type: 'airport', icon: '✈️', x: 78, y: 63, desc: '距苏州约30km，无锡机场。' },
+                { name: '苏州站', type: 'rail', icon: '🚄', x: 77, y: 62, desc: '高铁枢纽，京沪高铁重要站点。' },
+                { name: '苏州北站', type: 'rail', icon: '🚄', x: 78, y: 60, desc: '高铁站。' }
+            ]},
+            { id: 'dunhuang', name: '敦煌', x: 35.5, y: 38.5, category: 'popular', spots: [
+                { name: '莫高窟', x: 50, y: 45, icon: '🏛️', desc: '世界艺术宝库，敦煌壁画，需提前预约。', tags: ['世界遗产', '艺术', '必游'] },
+                { name: '鸣沙山月牙泉', x: 55, y: 55, icon: '🌙', desc: '沙漠奇观，月牙泉千年不涸，骑骆驼体验。', tags: ['自然奇观', '沙漠', '必游'] },
+                { name: '雅丹魔鬼城', x: 60, y: 35, icon: '🏔️', desc: '风蚀地貌，鬼斧神工，距市区约180km。', tags: ['地质', '自然', '摄影'] },
+                { name: '阳关', x: 40, y: 65, icon: '🏛️', desc: '西出阳关无故人，古丝绸之路关隘。', tags: ['历史', '古迹', '文化'] }
+            ], transport: [
+                { name: '莫高国际机场', type: 'airport', icon: '✈️', x: 38, y: 40, desc: '敦煌主要机场，机场大巴可达。' },
+                { name: '敦煌站', type: 'rail', icon: '🚄', x: 37, y: 39, desc: '兰新铁路重要站点，可通达兰州、乌鲁木齐。' }
+            ]},
+            { id: 'zhangjiajie', name: '张家界', x: 56.5, y: 70.5, category: 'popular', spots: [
+                { name: '武陵源', x: 50, y: 45, icon: '⛰️', desc: '世界自然遗产，阿凡达悬浮山原型，必游。', tags: ['世界遗产', '自然', '必游'] },
+                { name: '天门山', x: 55, y: 55, icon: '🚡', desc: '天门洞，玻璃栈道，世界最长高山索道。', tags: ['自然', '刺激', '必游'] },
+                { name: '大峡谷玻璃桥', x: 60, y: 60, icon: '🌉', desc: '世界最高最长玻璃桥，惊险刺激。', tags: ['刺激', '拍照', '体验'] },
+                { name: '黄龙洞', x: 45, y: 50, icon: '💎', desc: '世界溶洞奇观，地下河游船。', tags: ['溶洞', '自然', '探险'] }
+            ], transport: [
+                { name: '荷花国际机场', type: 'airport', icon: '✈️', x: 59, y: 72, desc: '张家界主要机场，机场大巴可达。' },
+                { name: '张家界西站', type: 'rail', icon: '🚄', x: 58, y: 71, desc: '高铁站，黔张常铁路重要站点。' }
+            ]},
+            { id: 'xishuangbanna', name: '西双版纳', x: 35.5, y: 88.5, category: 'popular', spots: [
+                { name: '野象谷', x: 55, y: 45, icon: '🐘', desc: '亚洲象栖息地，观象栈道，热带雨林。', tags: ['自然', '动物', '亲子'] },
+                { name: '傣族园', x: 45, y: 55, icon: '🏘️', desc: '傣族村寨，泼水节体验，民族风情。', tags: ['民俗', '体验', '文化'] },
+                { name: '中科院植物园', x: 60, y: 50, icon: '🌳', desc: '中国最大热带植物园，王莲睡莲，距市区约60km。', tags: ['自然', '科普', '摄影'] },
+                { name: '曼听公园', x: 50, y: 60, icon: '🏛️', desc: '傣王御花园，篝火晚会，大象表演。', tags: ['园林', '表演', '文化'] },
+                { name: '星光夜市', x: 50, y: 65, icon: '🌟', desc: '东南亚最大夜市，美食购物，大金塔夜景。', tags: ['夜市', '美食', '夜景'] }
+            ], transport: [
+                { name: '嘎洒国际机场', type: 'airport', icon: '✈️', x: 38, y: 90, desc: '西双版纳主要机场，距市区约5km。' },
+                { name: '西双版纳站', type: 'rail', icon: '🚄', x: 37, y: 89, desc: '中老铁路重要站点，可通达昆明、老挝。' }
+            ]}
+        ];
             {
                 id: 'beijing', name: '北京', x: 67.8, y: 41.2,
                 spots: [
@@ -1484,6 +1972,40 @@
             });
             positionMarkers();
             window.addEventListener('resize', positionMarkers);
+            initCityFilter();
+        }
+
+        // 城市分类筛选
+        function initCityFilter() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update active state
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Filter cities
+                    const category = btn.dataset.category;
+                    const markers = mapContainer.querySelectorAll('.city-marker');
+                    markers.forEach(marker => {
+                        const cityId = marker.dataset.cityId;
+                        const city = cities.find(c => c.id === cityId);
+                        if (category === 'all' || city.category === category) {
+                            marker.classList.remove('hidden');
+                        } else {
+                            marker.classList.remove('selected');
+                            marker.classList.add('hidden');
+                        }
+                    });
+
+                    // Clear selection if hidden
+                    selectedCities = selectedCities.filter(c => {
+                        const marker = mapContainer.querySelector(`.city-marker[data-city-id="${c.id}"]`);
+                        return marker && !marker.classList.contains('hidden');
+                    });
+                    updateRoutePanel();
+                });
+            });
         }
 
         function toggleCitySelection(city, marker) {
