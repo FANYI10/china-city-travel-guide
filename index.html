@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ 中国城市旅行指南</title>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --bg-light: #FFF9F0;
+            --text-dark: #2D3436;
+            --card-bg: #FFFFFF;
+            --shadow: rgba(45, 52, 54, 0.15);
+            --map-land: #A8D8B9;
+            --map-border: #5B8C5A;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8E8E 100%);
+            padding: 20px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float { 0% { transform: translate(0, 0); } 100% { transform: translate(30px, 30px); } }
+
+        .header h1 {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            position: relative; z-index: 1;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            margin-top: 8px;
+            font-size: 1.1rem;
+            position: relative; z-index: 1;
+        }
+
+        .main-container {
+            display: flex;
+            padding: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .map-section {
+            flex: 2;
+            min-width: 300px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 10px 40px var(--shadow);
+        }
+
+        /* 可拖拽分隔条 */
+        .resizer {
+            width: 16px;
+            cursor: col-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 100;
+            user-select: none;
+        }
+
+        .resizer::before {
+            content: '⋮';
+            font-size: 18px;
+            color: #ccc;
+            background: white;
+            width: 28px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .resizer:hover::before,
+        .resizer.active::before {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 2px 15px rgba(78, 205, 196, 0.4);
+        }
+
+        .map-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 4 / 3;
+            background: #E8F4FC;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid var(--secondary);
+        }
+
+        /* SVG矢量中国地图 */
+        .map-svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .map-svg .land {
+            fill: #A8D8B9 !important;
+            stroke: #5B8C5A !important;
+            stroke-width: 1 !important;
+            transition: fill 0.3s;
+        }
+        .map-svg .land:hover {
+            fill: #8BC9A0 !important;
+        }
+
+        .city-marker {
+            position: absolute;
+            cursor: pointer;
+            transform: translate(-50%, -100%);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .city-marker:hover { z-index: 20; transform: translate(-50%, -100%) scale(1.1); }
+
+        .marker-pin { display: flex; flex-direction: column; align-items: center; }
+
+        .marker-dot {
+            width: 28px; height: 28px;
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8E8E 100%);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.5);
+            position: relative;
+            border: 3px solid white;
+        }
+
+        .marker-dot::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px; height: 10px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .marker-label {
+            background: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 3px 12px var(--shadow);
+            margin-top: -8px;
+            color: var(--text-dark);
+            border: 2px solid var(--primary);
+        }
+
+        @keyframes bounce { 0%, 100% { transform: translate(-50%, -100%) translateY(0); } 50% { transform: translate(-50%, -100%) translateY(-8px); } }
+        .city-marker:hover { animation: bounce 0.5s ease infinite; }
+
+        .sidebar { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+        .spot-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        .spot-card h3 { font-family: 'ZCOOL KuaiLe', cursive; font-size: 1.4rem; color: var(--text-dark); margin-bottom: 12px; }
+        .spot-desc { color: #666; line-height: 1.6; font-size: 0.95rem; }
+        .spot-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+        .tag { background: linear-gradient(135deg, var(--accent) 0%, #FFD93D 100%); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; color: var(--text-dark); font-weight: 500; }
+
+        .route-panel {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 30px var(--shadow);
+        }
+
+        .route-panel h3 { font-family: 'ZCOOL KuaiLe', cursive; font-size: 1.3rem; color: var(--text-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+
+        .selected-spots { display: flex; gap: 10px; margin-bottom: 15px; min-height: 50px; align-items: center; flex-wrap: wrap; }
+
+        .selected-spot {
+            background: linear-gradient(135deg, var(--secondary) 0%, #6EE7DE 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .selected-spot .remove { cursor: pointer; opacity: 0.8; }
+        .selected-spot .remove:hover { opacity: 1; }
+        .placeholder-text { color: #999; font-size: 0.9rem; }
+
+        .generate-route-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8E8E 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .generate-route-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4); }
+        .generate-route-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .route-result { margin-top: 15px; padding: 15px; background: #F8F9FA; border-radius: 12px; display: none; }
+        .route-result.active { display: block; animation: slideIn 0.4s ease; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .route-line { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .route-node { width: 12px; height: 12px; background: var(--primary); border-radius: 50%; }
+        .route-path { flex: 1; height: 3px; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 2px; }
+
+        .travel-options { display: flex; flex-direction: column; gap: 10px; }
+
+        .travel-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .travel-option:hover { border-color: var(--secondary); }
+
+        .travel-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent) 0%, #FFD93D 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .travel-info h4 { font-size: 0.95rem; color: var(--text-dark); margin-bottom: 2px; }
+        .travel-info p { font-size: 0.8rem; color: #888; }
+
+        .tip-box { background: linear-gradient(135deg, #FFF3CD 0%, #FFE69C 100%); border-radius: 12px; padding: 15px; margin-top: 15px; }
+        .tip-box h4 { font-size: 0.9rem; color: #856404; margin-bottom: 5px; }
+        .tip-box p { font-size: 0.85rem; color: #856404; line-height: 1.5; }
+
+        /* 城市详情模态框 */
+        .city-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .city-modal.active { display: flex; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .city-modal-content {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: modalSlide 0.4s ease;
+        }
+
+        @keyframes modalSlide { from { opacity: 0; transform: translateY(50px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .city-modal-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #FF8E8E 100%);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .city-modal-header h2 { font-family: 'ZCOOL KuaiLe', cursive; color: white; font-size: 1.8rem; display: flex; align-items: center; gap: 10px; }
+
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
+
+        .city-modal-body { display: flex; flex: 1; overflow: hidden; }
+
+        .city-map-section { width: 45%; padding: 20px; display: flex; flex-direction: column; background: #F8F9FA; }
+        .city-map-title { font-family: 'ZCOOL KuaiLe', cursive; font-size: 1.2rem; color: var(--text-dark); margin-bottom: 10px; }
+
+        .city-map {
+            flex: 1;
+            background: linear-gradient(180deg, #E8F4F8 0%, #D4E8ED 100%);
+            border-radius: 16px;
+            position: relative;
+            min-height: 300px;
+            border: 3px solid var(--secondary);
+        }
+
+        .city-spot-marker { position: absolute; cursor: pointer; transform: translate(-50%, -50%); transition: all 0.3s ease; z-index: 10; }
+        .city-spot-marker:hover { transform: translate(-50%, -50%) scale(1.2); }
+
+        .spot-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent) 0%, #FFD93D 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(255, 230, 109, 0.5);
+            border: 3px solid white;
+        }
+
+        .spot-name-label {
+            position: absolute;
+            top: 100%; left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 500;
+            white-space: nowrap;
+            box-shadow: 0 2px 6px var(--shadow);
+            margin-top: 2px;
+        }
+
+        /* 交通枢纽标记 */
+        .transport-marker {
+            position: absolute;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s ease;
+            z-index: 8;
+        }
+
+        .transport-marker:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+
+        .transport-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #74B9FF 0%, #0984E3 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            box-shadow: 0 3px 10px rgba(9, 132, 227, 0.4);
+            border: 2px solid white;
+        }
+
+        .transport-label {
+            position: absolute;
+            top: 100%; left: 50%;
+            transform: translateX(-50%);
+            background: #0984E3;
+            color: white;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 500;
+            white-space: nowrap;
+            margin-top: 2px;
+            opacity: 0.85;
+        }
+
+        .city-guide-section { width: 55%; padding: 20px; overflow-y: auto; max-height: 70vh; }
+
+        .guide-tabs { display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+
+        .guide-tab {
+            padding: 8px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .guide-tab.active { background: linear-gradient(135deg, var(--primary) 0%, #FF8E8E 100%); color: white; }
+        .guide-tab:hover:not(.active) { background: #e0e0e0; }
+
+        .spots-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+        .spot-item {
+            background: white;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .spot-item:hover { border-color: var(--secondary); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .spot-item.selected { border-color: var(--primary); background: #FFF5F5; }
+
+        .spot-item-header { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+        .spot-item-icon { font-size: 1.1rem; }
+        .spot-item-name { font-weight: 600; color: var(--text-dark); font-size: 0.85rem; }
+        .spot-item-desc { font-size: 0.75rem; color: #666; line-height: 1.4; margin-bottom: 4px; }
+        .spot-item-tags { display: flex; flex-wrap: wrap; gap: 3px; }
+        .spot-item-tag { background: var(--accent); padding: 1px 5px; border-radius: 6px; font-size: 0.6rem; color: var(--text-dark); }
+
+        .guide-card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .guide-card h4 { font-family: 'ZCOOL KuaiLe', cursive; font-size: 1rem; color: var(--text-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .guide-card p { font-size: 0.85rem; color: #555; line-height: 1.6; margin-bottom: 8px; }
+        .guide-card ul { padding-left: 18px; font-size: 0.85rem; color: #555; line-height: 1.7; }
+        .guide-card li { margin-bottom: 4px; }
+
+        .guide-tip { background: linear-gradient(135deg, #E8F5E9 0%, #C8E6C9 100%); padding: 10px 12px; border-radius: 10px; font-size: 0.8rem; color: #2E7D32; margin-top: 8px; }
+
+        .route-line-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        .route-line-path { fill: none; stroke: var(--primary); stroke-width: 3; stroke-dasharray: 10, 5; animation: dash 1s linear infinite; }
+
+        @keyframes dash { to { stroke-dashoffset: -15; } }
+
+        .route-info-panel {
+            position: absolute;
+            bottom: 10px; left: 10px; right: 10px;
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 20;
+        }
+
+        .route-info-panel h5 { font-family: 'ZCOOL KuaiLe', cursive; margin-bottom: 6px; color: var(--text-dark); font-size: 0.85rem; }
+        .route-options-mini { display: flex; gap: 6px; }
+
+        .route-option-mini {
+            flex: 1;
+            background: #F8F9FA;
+            border-radius: 6px;
+            padding: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .route-option-mini:hover { border-color: var(--secondary); background: #E8F8F5; }
+        .route-option-mini .icon { font-size: 1rem; margin-bottom: 2px; }
+        .route-option-mini .name { font-size: 0.7rem; font-weight: 500; color: var(--text-dark); }
+        .route-option-mini .time { font-size: 0.6rem; color: #888; }
+
+        @media (max-width: 1024px) {
+            .main-container { flex-direction: column; }
+            .map-container { height: 400px; }
+            .city-modal-body { flex-direction: column; }
+            .city-map-section, .city-guide-section { width: 100%; }
+            .city-guide-section { max-height: 400px; }
+            .spots-grid { grid-template-columns: 1fr; }
+        }
+
+        /* 平板设备 */
+        @media (max-width: 768px) {
+            .header { padding: 15px 20px; }
+            .header h1 { font-size: 1.5rem; }
+            .header p { font-size: 0.9rem; }
+            .main-container { padding: 15px; }
+            .map-title { font-size: 1.2rem; }
+            .map-container { aspect-ratio: 3/4; }
+            .city-marker { transform: translate(-50%, -100%) scale(0.85); }
+            .marker-label { font-size: 0.7rem; }
+            .sidebar { padding: 15px; }
+            .spot-card h3 { font-size: 1.1rem; }
+            .spot-tags { flex-wrap: wrap; }
+            .tag { font-size: 0.75rem; padding: 4px 10px; }
+            .resizer { display: none; }
+            .modal-content { width: 95%; margin: 10px; max-height: 95vh; }
+            .city-modal-header { padding: 15px 20px; }
+            .city-modal-header h2 { font-size: 1.3rem; }
+            .city-map-section { min-height: 250px; }
+            .spots-grid { grid-template-columns: 1fr; gap: 10px; }
+            .spot-item { padding: 12px; }
+            .guide-card { padding: 15px; }
+            .transport-list { grid-template-columns: 1fr; }
+        }
+
+        /* 手机设备 */
+        @media (max-width: 480px) {
+            .header { padding: 12px 15px; }
+            .header h1 { font-size: 1.2rem; }
+            .header p { font-size: 0.8rem; }
+            .main-container { padding: 10px; }
+            .map-section { padding: 12px; }
+            .map-title { font-size: 1rem; margin-bottom: 10px; }
+            .map-container { aspect-ratio: 2/3; border-radius: 12px; }
+            .city-marker { transform: translate(-50%, -100%) scale(0.75); }
+            .marker-pin { padding: 3px 6px; }
+            .marker-dot { width: 8px; height: 8px; }
+            .marker-label { font-size: 0.6rem; }
+            .sidebar { padding: 12px; border-radius: 16px; }
+            .spot-card { padding: 15px; }
+            .spot-card h3 { font-size: 1rem; }
+            .spot-desc { font-size: 0.85rem; }
+            .route-panel { padding: 15px; }
+            .route-panel h3 { font-size: 1rem; }
+            .generate-route-btn { padding: 12px 20px; font-size: 0.9rem; }
+            .tips-card { padding: 12px; }
+            .tips-card h4 { font-size: 0.9rem; }
+            .tips-card li { font-size: 0.8rem; }
+            .modal-content { border-radius: 16px; }
+            .city-modal-header { padding: 12px 15px; }
+            .city-modal-header h2 { font-size: 1.1rem; }
+            .close-btn { width: 32px; height: 32px; font-size: 1.2rem; }
+            .tab-btn { padding: 10px 12px; font-size: 0.8rem; }
+            .city-map-container { height: 200px; }
+            .spots-grid { gap: 8px; }
+            .spot-item { padding: 10px; }
+            .spot-name { font-size: 0.85rem; }
+            .spot-item-desc { font-size: 0.7rem; }
+            .food-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .food-item { padding: 8px; font-size: 0.8rem; }
+            .transport-item { padding: 10px; }
+            .transport-icon { font-size: 1.5rem; }
+            .transport-name { font-size: 0.85rem; }
+            .transport-desc { font-size: 0.75rem; }
+        }
+
+        /* 小屏手机 */
+        @media (max-width: 360px) {
+            .header h1 { font-size: 1.1rem; }
+            .city-marker { transform: translate(-50%, -100%) scale(0.7); }
+            .marker-label { font-size: 0.55rem; }
+            .food-grid { grid-template-columns: 1fr; }
+        }
+
+        /* 横屏模式 */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header { padding: 10px 20px; }
+            .header h1 { font-size: 1.2rem; }
+            .main-container { flex-direction: row; }
+            .map-section { flex: 1; }
+            .sidebar { flex: 0 0 200px; }
+            .modal-content { max-height: 90vh; }
+        }
+
+        /* 触摸设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+            .city-marker:hover { transform: translate(-50%, -100%) scale(1.1); }
+            .marker-pin { -webkit-tap-highlight-color: transparent; }
+            .tab-btn { -webkit-tap-highlight-color: transparent; }
+            .generate-route-btn { -webkit-tap-highlight-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🗺️ 中国城市旅行指南</h1>
+        <p>点击地图上的城市，探索精彩景点 | 选择两个景点规划路线</p>
+    </header>
+
+    <main class="main-container">
+        <section class="map-section">
+            <h2 class="map-title">📍 中国热门旅行城市</h2>
+            <div class="map-container" id="map">
+                <!-- SVG矢量中国地图 -->
+                <img class="map-svg" src="assets/chinaLow.svg" alt="中国地图">
+                <!-- 城市标记点将通过JS动态添加 -->
+            </div>
+        </section>
+
+        <!-- 可拖拽分隔条 -->
+        <div class="resizer" id="resizer"></div>
+
+        <aside class="sidebar">
+            <div class="spot-card" id="spotCard">
+                <h3>👋 欢迎探索</h3>
+                <p class="spot-desc">点击地图上的城市标记，查看城市详情和景点信息。可以查看攻略、选择景点规划路线。</p>
+                <div class="spot-tags">
+                    <span class="tag">🗺️ 11个热门城市</span>
+                    <span class="tag">📍 55+景点</span>
+                    <span class="tag">🚄 交通枢纽</span>
+                </div>
+            </div>
+
+            <div class="route-panel">
+                <h3>🛤️ 路线规划</h3>
+                <div class="selected-spots" id="selectedSpots">
+                    <span class="placeholder-text">请在地图上选择两个景点...</span>
+                </div>
+                <button class="generate-route-btn" id="generateBtn" disabled>生成旅行路线 ✨</button>
+                <div class="route-result" id="routeResult">
+                    <div class="route-line">
+                        <span class="route-node"></span>
+                        <div class="route-path"></div>
+                        <span class="route-node"></span>
+                    </div>
+                    <div class="travel-options" id="travelOptions"></div>
+                </div>
+                <div class="tip-box">
+                    <h4>💡 小贴士</h4>
+                    <p>点击城市标记可以进入城市详情页，查看城市地图、景点分布和旅行攻略，选择景点规划路线。</p>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <div class="city-modal" id="cityModal">
+        <div class="city-modal-content">
+            <div class="city-modal-header">
+                <h2 id="modalCityName">🏙️ 城市名称</h2>
+                <button class="close-btn" onclick="closeCityModal()">✕</button>
+            </div>
+            <div class="city-modal-body">
+                <div class="city-map-section">
+                    <h3 class="city-map-title">📍 景点分布</h3>
+                    <div class="city-map" id="cityMap">
+                        <svg class="route-line-svg" id="routeLineSvg"></svg>
+                    </div>
+                </div>
+                <div class="city-guide-section">
+                    <div class="guide-tabs">
+                        <button class="guide-tab active" onclick="switchTab('spots')">🎯 景点</button>
+                        <button class="guide-tab" onclick="switchTab('guide')">📖 攻略</button>
+                        <button class="guide-tab" onclick="switchTab('food')">🍜 美食</button>
+                        <button class="guide-tab" onclick="switchTab('transport')">🚄 交通</button>
+                        <button class="guide-tab" onclick="switchTab('tips')">💡 贴士</button>
+                    </div>
+                    <div id="guideContentContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cities = [
+            {
+                id: 'beijing', name: '北京', x: 67.8, y: 41.2, icon: '🏛️',
+                spots: [
+                    { name: '故宫博物院', x: 45, y: 35, icon: '🏯', desc: '明清两代皇家宫殿，世界最大的木质古建筑群，游览约4小时。', tags: ['世界遗产', '历史古迹', '必游'] },
+                    { name: '八达岭长城', x: 65, y: 20, icon: '🧱', desc: '万里长城精华段，世界七大奇迹之一，游览约3-4小时。', tags: ['世界奇迹', '户外探险', '摄影'] },
+                    { name: '颐和园', x: 30, y: 50, icon: '🏞️', desc: '清朝皇家园林，昆明湖万寿山，游览约3小时。', tags: ['皇家园林', '世界遗产', '休闲'] },
+                    { name: '天坛公园', x: 55, y: 60, icon: '🏛️', desc: '明清皇帝祭天之所，祈年殿是北京地标，游览约2.5小时。', tags: ['世界遗产', '古建筑', '祈福'] },
+                    { name: '什刹海', x: 40, y: 45, icon: '🌊', desc: '老北京风情街区，胡同游船酒吧，游览约2小时。', tags: ['老北京', '夜景', '酒吧'] }
+                ],
+                guide: {
+                    title: '北京旅行攻略',
+                    content: '北京是中国的首都，拥有三千多年历史，是世界著名的历史文化名城。故宫需提前预约门票，周一闭馆。',
+                    highlights: ['故宫：建议早上8点入园，避开人流高峰', '长城：推荐八达岭或慕田峪段，穿舒适鞋子', '颐和园：春秋季节最美，可乘船游昆明湖', '天坛：清晨可看大爷大妈晨练，很有生活气息'],
+                    tip: '北京地铁发达，建议办理一卡通或使用手机支付。故宫需要提前预约门票！天安门升旗需早起排队。'
+                },
+                food: ['北京烤鸭', '炸酱面', '豆汁焦圈', '卤煮火烧', '驴打滚', '爆肚', '涮羊肉'],
+                tips: ['故宫周一闭馆', '长城建议穿舒适鞋子', '天安门升旗需早起排队', '什刹海晚上热闹', '南锣鼓巷适合逛街'],
+                transport: [
+                    { name: '首都国际机场', type: 'airport', icon: '✈️', x: 70, y: 38, desc: '北京最大机场，距市区约30km，地铁机场线直达。' },
+                    { name: '大兴国际机场', type: 'airport', icon: '✈️', x: 65, y: 44, desc: '新机场，距市区约50km，地铁大兴线可达。' },
+                    { name: '北京南站', type: 'rail', icon: '🚄', x: 69, y: 43, desc: '高铁枢纽，京津城际、京沪高铁始发站。' },
+                    { name: '北京西站', type: 'rail', icon: '🚄', x: 65, y: 40, desc: '京广高铁、京九铁路始发站。' }
+                ]
+            },
+            {
+                id: 'shanghai', name: '上海', x: 76.3, y: 64.7, icon: '🌃',
+                spots: [
+                    { name: '外滩', x: 50, y: 40, icon: '🌆', desc: '上海城市封面，万国建筑博览群，全长1.5公里，夜景绝美。', tags: ['城市地标', '夜景', '免费'] },
+                    { name: '东方明珠', x: 60, y: 50, icon: '🗼', desc: '468米高的上海地标，可俯瞰全城，透明观光廊刺激。', tags: ['地标', '观光', '拍照'] },
+                    { name: '迪士尼乐园', x: 80, y: 65, icon: '🏰', desc: '中国大陆首座迪士尼，童话世界，门票399元起。', tags: ['主题乐园', '亲子游', '梦幻'] },
+                    { name: '豫园城隍庙', x: 35, y: 35, icon: '🏮', desc: '江南古典园林，南翔小笼包发源地，游览约2小时。', tags: ['古典园林', '美食街', '购物'] },
+                    { name: '田子坊', x: 25, y: 55, icon: '🎨', desc: '旧里弄改造的艺术社区，文艺小店咖啡馆聚集地。', tags: ['文艺', '拍照', '咖啡'] }
+                ],
+                guide: {
+                    title: '上海旅行攻略',
+                    content: '上海是中国最大的城市，融合东西方文化，是现代化国际大都市。迪士尼建议提前下载官方APP预约项目。',
+                    highlights: ['外滩：傍晚时分最佳，可欣赏浦江两岸夜景，清晨人少', '迪士尼：建议工作日前往，下载官方APP抢FP', '豫园：可以品尝正宗的南翔小笼包', '田子坊：适合文艺青年打卡拍照'],
+                    tip: '上海地铁覆盖全城，交通便利。南京路步行街适合购物，思南公馆适合拍照喝咖啡。迪士尼烟花表演必看！'
+                },
+                food: ['小笼包', '生煎包', '红烧肉', '白切鸡', '蟹壳黄', '葱油拌面', '排骨年糕'],
+                tips: ['迪士尼需提前购票', '外滩晚上人多注意安全', '豫园小吃价格偏高', '南京路步行街适合购物', '思南公馆免费开放'],
+                transport: [
+                    { name: '浦东国际机场', type: 'airport', icon: '✈️', x: 79, y: 67, desc: '国际航班为主，地铁2号线直达，磁悬浮可达。' },
+                    { name: '虹桥国际机场', type: 'airport', icon: '✈️', x: 74, y: 63, desc: '国内航班为主，地铁2号线/10号线可达。' },
+                    { name: '上海虹桥站', type: 'rail', icon: '🚄', x: 75, y: 64, desc: '高铁枢纽，京沪高铁终点站，与虹桥机场相连。' },
+                    { name: '上海站', type: 'rail', icon: '🚄', x: 74, y: 66, desc: '沪宁城际等线路始发站，地铁1号线/3号线/4号线可达。' }
+                ]
+            },
+            {
+                id: 'chengdu', name: '成都', x: 44.5, y: 62.5, icon: '🐼',
+                spots: [
+                    { name: '大熊猫基地', x: 40, y: 20, icon: '🐼', desc: '世界著名的大熊猫保护基地，早上8点前到达熊猫最活跃。', tags: ['国宝熊猫', '亲子游', '必游'] },
+                    { name: '宽窄巷子', x: 50, y: 45, icon: '🏠', desc: '成都历史文化街区，宽巷子窄巷子井巷子，体验慢生活。', tags: ['古街巷', '美食', '文艺'] },
+                    { name: '锦里古街', x: 30, y: 55, icon: '🎭', desc: '三国文化主题古街，小吃天堂，晚上灯光很美。', tags: ['古街', '小吃', '夜景'] },
+                    { name: '武侯祠', x: 25, y: 45, icon: '🏛️', desc: '纪念诸葛亮的祠庙，三国文化圣地，与锦里相邻。', tags: ['三国文化', '古建筑', '历史'] },
+                    { name: '春熙路太古里', x: 60, y: 60, icon: '🛍️', desc: '成都核心商圈，IFS爬墙熊猫必打卡，时尚购物天堂。', tags: ['购物', '网红打卡', '美食'] },
+                    { name: '人民公园', x: 45, y: 70, icon: '🌳', desc: '成都人休闲生活缩影，喝茶掏耳朵，体验地道慢生活。', tags: ['休闲', '茶馆', '本地生活'] }
+                ],
+                guide: {
+                    title: '成都旅行攻略',
+                    content: '成都是四川省省会，以美食、熊猫和悠闲的生活方式闻名，是"一座来了就不想走的城市"。',
+                    highlights: ['熊猫基地：早上8点前到达，熊猫最活跃，需提前预约', '宽窄巷子：适合下午茶和拍照，人多但值得去', '锦里：晚上灯光很美，小吃种类丰富', '人民公园：喝茶掏耳朵，体验地道成都生活'],
+                    tip: '成都美食以麻辣为主，不习惯的朋友可以提前说"微辣"。春熙路是购物好去处，晚上可以去九眼桥看夜景喝酒。'
+                },
+                food: ['火锅', '串串香', '担担面', '龙抄手', '夫妻肺片', '麻婆豆腐', '兔头', '钵钵鸡', '甜水面'],
+                tips: ['熊猫基地需提前预约', '吃火锅建议选择老字号', '人民公园喝茶体验地道生活', '九眼桥夜景很美', '春熙路IFS熊猫必打卡'],
+                transport: [
+                    { name: '天府国际机场', type: 'airport', icon: '✈️', x: 49, y: 67, desc: '成都主要机场，距市区约50km，地铁18号线直达。' },
+                    { name: '双流国际机场', type: 'airport', icon: '✈️', x: 44, y: 63, desc: '国内航线为主，距市区约15km，地铁10号线可达。' },
+                    { name: '成都东站', type: 'rail', icon: '🚄', x: 48, y: 65, desc: '高铁枢纽，成渝高铁始发站，地铁2号线/7号线可达。' },
+                    { name: '成都南站', type: 'rail', icon: '🚄', x: 46, y: 67, desc: '成绵乐城际等线路，地铁1号线/7号线可达。' }
+                ]
+            },
+            {
+                id: 'xian', name: '西安', x: 56.3, y: 51.7, icon: '🏺',
+                spots: [
+                    { name: '兵马俑', x: 60, y: 25, icon: '⚔️', desc: '世界第八大奇迹，秦始皇陵博物馆，门票120元，游览约3小时。', tags: ['世界遗产', '考古', '必游'] },
+                    { name: '大雁塔', x: 45, y: 55, icon: '🗼', desc: '唐代佛教建筑杰作，西安象征，晚上有音乐喷泉表演。', tags: ['佛教圣地', '夜景', '喷泉'] },
+                    { name: '回民街', x: 30, y: 45, icon: '🍜', desc: '千年历史美食街，西北美食汇聚，肉夹馍羊肉泡馍必尝。', tags: ['美食街', '夜市', '小吃'] },
+                    { name: '大唐不夜城', x: 55, y: 65, icon: '🏮', desc: '仿唐建筑步行街，灯光秀美轮美奂，网红打卡地。', tags: ['夜景', '网红', '免费'] },
+                    { name: '古城墙', x: 40, y: 35, icon: '🏰', desc: '中国现存最完整的古城墙，可骑行环城，全长13.7公里。', tags: ['古建筑', '骑行', '日落'] },
+                    { name: '陕西历史博物馆', x: 50, y: 50, icon: '🏛️', desc: '中国第一座大型现代化博物馆，免费但需提前预约。', tags: ['博物馆', '免费', '预约'] }
+                ],
+                guide: {
+                    title: '西安旅行攻略',
+                    content: '西安是十三朝古都，拥有丰富的历史文化遗产，是丝绸之路的起点。陕西历史博物馆一定要提前预约！',
+                    highlights: ['兵马俑：建议请讲解员，了解更多历史，距离市区较远', '大雁塔：晚上有音乐喷泉表演，大唐不夜城必去', '回民街：肉夹馍和羊肉泡馍必尝，注意尊重民族习俗', '古城墙：可以骑行，日落时分最美'],
+                    tip: '西安城墙可以骑行，全长13.7公里，需2-3小时。华清宫和兵马俑可以安排在同一天。大唐不夜城晚上去最美！'
+                },
+                food: ['肉夹馍', '羊肉泡馍', '凉皮', 'biangbiang面', '胡辣汤', '甑糕', '灌汤包', '酸汤水饺'],
+                tips: ['兵马俑距离市区较远', '回民街注意尊重民族习俗', '城墙骑行需2-3小时', '陕历博免费但需预约', '大唐不夜城晚上去'],
+                transport: [
+                    { name: '咸阳国际机场', type: 'airport', icon: '✈️', x: 54, y: 49, desc: '西安主要机场，距市区约25km，地铁14号线可达。' },
+                    { name: '西安北站', type: 'rail', icon: '🚄', x: 59, y: 52, desc: '高铁枢纽，郑西高铁、大西高铁始发站。' },
+                    { name: '西安站', type: 'rail', icon: '🚄', x: 55, y: 53, desc: '普速列车主要车站，地铁1号线可达。' }
+                ]
+            },
+            {
+                id: 'hangzhou', name: '杭州', x: 73.8, y: 70.0, icon: '🌊',
+                spots: [
+                    { name: '西湖', x: 40, y: 45, icon: '🏞️', desc: '中国著名风景名胜，免费开放，断桥残雪雷峰夕照最著名。', tags: ['世界遗产', '自然风光', '免费'] },
+                    { name: '灵隐寺', x: 25, y: 30, icon: '⛩️', desc: '千年古刹，济公出家之地，飞来峰石窟造像精美。', tags: ['佛教圣地', '祈福', '古刹'] },
+                    { name: '河坊街', x: 65, y: 60, icon: '🏪', desc: '清末民初风格历史街区，购物品尝小吃好去处。', tags: ['古街', '购物', '美食'] },
+                    { name: '宋城', x: 75, y: 70, icon: '🎭', desc: '大型主题公园，宋城千古情演出震撼，门票约300元。', tags: ['主题公园', '演出', '亲子'] },
+                    { name: '龙井村', x: 30, y: 55, icon: '🍵', desc: '龙井茶原产地，茶园风光，可品尝正宗龙井茶。', tags: ['茶园', '品茶', '自然'] }
+                ],
+                guide: {
+                    title: '杭州旅行攻略',
+                    content: '杭州是浙江省省会，以西湖美景闻名，素有"人间天堂"美誉。西湖免费开放，春秋季节最适合游览。',
+                    highlights: ['西湖：推荐骑行或步行环湖，苏堤白堤最美，免费', '灵隐寺：可以顺便游览飞来峰，需单独购票', '河坊街：适合购买特产和品尝小吃', '龙井村：可以品尝正宗龙井茶，环境清幽'],
+                    tip: '西湖十景各有特色，断桥残雪、雷峰夕照最为著名。龙井村可以品尝正宗龙井茶。春秋季节最适合游览。'
+                },
+                food: ['西湖醋鱼', '东坡肉', '龙井虾仁', '叫化鸡', '片儿川', '葱包桧', '定胜糕'],
+                tips: ['西湖免费开放', '灵隐寺需单独购票', '春秋季节最适合游览', '龙井村品茶体验好', '宋城演出很震撼'],
+                transport: [
+                    { name: '萧山国际机场', type: 'airport', icon: '✈️', x: 76, y: 72, desc: '杭州主要机场，距市区约27km，地铁1号线/7号线可达。' },
+                    { name: '杭州东站', type: 'rail', icon: '🚄', x: 72, y: 69, desc: '高铁枢纽，沪昆高铁、宁杭高铁始发站。' },
+                    { name: '杭州站', type: 'rail', icon: '🚄', x: 73, y: 71, desc: '沪昆铁路等线路，地铁1号线可达。' }
+                ]
+            },
+            {
+                id: 'guangzhou', name: '广州', x: 63.8, y: 86.7, icon: '🌺',
+                spots: [
+                    { name: '广州塔', x: 55, y: 40, icon: '🗼', desc: '广州新地标小蛮腰，600米高，傍晚登塔看日落夜景。', tags: ['城市地标', '夜景', '观光'] },
+                    { name: '陈家祠', x: 35, y: 55, icon: '🏛️', desc: '岭南建筑艺术瑰宝，木雕砖雕精美绝伦。', tags: ['古建筑', '文化', '艺术'] },
+                    { name: '沙面岛', x: 70, y: 60, icon: '🏝️', desc: '欧式建筑群，文艺打卡地，适合拍照喝下午茶。', tags: ['欧式建筑', '拍照', '文艺'] },
+                    { name: '北京路步行街', x: 45, y: 45, icon: '🛍️', desc: '广州最繁华商业街，千年古道遗址，购物美食天堂。', tags: ['购物', '美食', '历史'] },
+                    { name: '长隆野生动物世界', x: 80, y: 75, icon: '🦁', desc: '世界级野生动物园，可自驾游览，亲子游首选。', tags: ['动物园', '亲子游', '自驾'] }
+                ],
+                guide: {
+                    title: '广州旅行攻略',
+                    content: '广州是广东省省会，岭南文化中心，美食之都，有"食在广州"的美誉。早茶文化浓厚，一定要体验！',
+                    highlights: ['广州塔：傍晚登塔看日落和夜景，可网上购票', '陈家祠：了解岭南建筑和工艺，门票便宜', '沙面：适合拍照和喝下午茶，免费开放', '长隆：亲子游首选，建议玩一整天'],
+                    tip: '广州早茶文化浓厚，推荐点都德、陶陶居等老字号。北京路步行街适合购物。夏季炎热注意防暑！'
+                },
+                food: ['早茶点心', '白切鸡', '烧鹅', '肠粉', '艇仔粥', '双皮奶', '虾饺', '叉烧包', '煲仔饭'],
+                tips: ['早茶建议上午前往', '广州塔可网上购票', '夏季炎热注意防暑', '长隆建议玩一整天', '沙面免费开放'],
+                transport: [
+                    { name: '白云国际机场', type: 'airport', icon: '✈️', x: 66, y: 88, desc: '广州主要机场，距市区约28km，地铁3号线可达。' },
+                    { name: '广州南站', type: 'rail', icon: '🚄', x: 62, y: 89, desc: '高铁枢纽，京广高铁、广深港高铁始发站。' },
+                    { name: '广州站', type: 'rail', icon: '🚄', x: 63, y: 86, desc: '普速列车主要车站，地铁2号线/5号线可达。' }
+                ]
+            },
+            {
+                id: 'chongqing', name: '重庆', x: 54.0, y: 67.0, icon: '🌶️',
+                spots: [
+                    { name: '洪崖洞', x: 50, y: 35, icon: '🏮', desc: '巴渝传统建筑，夜景如千与千寻，网红打卡圣地。', tags: ['网红打卡', '夜景', '免费'] },
+                    { name: '解放碑', x: 45, y: 55, icon: '🏛️', desc: '重庆地标，繁华商圈，购物美食中心。', tags: ['地标', '购物', '美食'] },
+                    { name: '磁器口古镇', x: 25, y: 45, icon: '🏘️', desc: '千年古镇，巴渝民俗风情，陈麻花毛血旺必尝。', tags: ['古镇', '小吃', '民俗'] },
+                    { name: '李子坝轻轨', x: 60, y: 40, icon: '🚇', desc: '轻轨穿楼奇观，8D魔幻城市代表，免费打卡。', tags: ['网红', '免费', '奇观'] },
+                    { name: '长江索道', x: 40, y: 65, icon: '🚡', desc: '横跨长江的空中巴士，俯瞰山城美景，需排队。', tags: ['观光', '夜景', '体验'] },
+                    { name: '武隆天坑', x: 75, y: 70, icon: '🏔️', desc: '世界自然遗产，天生三桥震撼，距离市区较远。', tags: ['自然奇观', '世界遗产', '一日游'] }
+                ],
+                guide: {
+                    title: '重庆旅行攻略',
+                    content: '重庆是直辖市，山城、雾都，以火锅和8D魔幻城市闻名。地形复杂，导航可能不准，建议问路！',
+                    highlights: ['洪崖洞：晚上灯光最美，建议从千厮门大桥拍摄', '解放碑：重庆最繁华的商业中心，购物美食', '磁器口：可以买陈麻花，品尝毛血旺', '李子坝：轻轨穿楼奇观，免费打卡'],
+                    tip: '重庆地形复杂，导航可能不准，建议问路。轻轨穿楼是李子坝站，值得打卡。穿舒适的平底鞋！火锅建议选择巷子里的老店。'
+                },
+                food: ['重庆火锅', '小面', '酸辣粉', '毛血旺', '抄手', '陈麻花', '烤鱼', '山城小汤圆'],
+                tips: ['穿舒适的平底鞋', '火锅建议选择巷子里的老店', '长江索道需要排队', '洪崖洞晚上去最美', '武隆天坑需一日游'],
+                transport: [
+                    { name: '江北国际机场', type: 'airport', icon: '✈️', x: 57, y: 65, desc: '重庆主要机场，距市区约21km，地铁3号线/10号线可达。' },
+                    { name: '重庆北站', type: 'rail', icon: '🚄', x: 53, y: 68, desc: '高铁枢纽，成渝高铁、渝万城际始发站。' },
+                    { name: '重庆西站', type: 'rail', icon: '🚄', x: 52, y: 69, desc: '渝贵铁路、兰渝铁路等线路，地铁环线/5号线可达。' }
+                ]
+            },
+            {
+                id: 'nanjing', name: '南京', x: 69.4, y: 57.5, icon: '🌸',
+                spots: [
+                    { name: '中山陵', x: 55, y: 30, icon: '🏛️', desc: '孙中山先生陵墓，庄严肃穆，需爬392级台阶。', tags: ['历史名胜', '免费', '预约'] },
+                    { name: '夫子庙秦淮河', x: 40, y: 55, icon: '🏮', desc: '六朝古都风韵，晚上秦淮河灯光很美，画舫游船。', tags: ['古街', '夜景', '游船'] },
+                    { name: '总统府', x: 30, y: 45, icon: '🏢', desc: '近代史博物馆，民国建筑群，了解近代历史。', tags: ['历史建筑', '博物馆', '民国'] },
+                    { name: '南京博物院', x: 50, y: 65, icon: '🏛️', desc: '中国三大博物馆之一，免费但需提前预约。', tags: ['博物馆', '免费', '预约'] },
+                    { name: '玄武湖', x: 45, y: 40, icon: '🌊', desc: '江南三大名湖之一，环湖骑行散步，免费开放。', tags: ['自然风光', '免费', '休闲'] }
+                ],
+                guide: {
+                    title: '南京旅行攻略',
+                    content: '南京是江苏省省会，六朝古都，历史文化底蕴深厚。春天梅花山、秋天栖霞山都很美。',
+                    highlights: ['中山陵：需要爬392级台阶，建议早上前往，免费但需预约', '夫子庙：晚上秦淮河灯光很美，画舫游船体验好', '总统府：了解近代历史的好去处', '南京博物院：免费但需提前预约'],
+                    tip: '南京大屠杀遇难同胞纪念馆值得参观，需提前预约。春天梅花山、秋天栖霞山都很美。夫子庙小吃价格偏高。'
+                },
+                food: ['鸭血粉丝汤', '盐水鸭', '小笼包', '牛肉锅贴', '桂花糖芋苗', '鸭油酥烧饼', '鸡鸣汤包'],
+                tips: ['中山陵免费但需预约', '夫子庙小吃价格偏高', '南京博物院值得一看', '春天梅花山很美', '秋天栖霞山红叶'],
+                transport: [
+                    { name: '禄口国际机场', type: 'airport', icon: '✈️', x: 72, y: 59, desc: '南京主要机场，距市区约35km，地铁S1号线可达。' },
+                    { name: '南京南站', type: 'rail', icon: '🚄', x: 68, y: 58, desc: '高铁枢纽，京沪高铁、沪汉蓉高铁始发站。' },
+                    { name: '南京站', type: 'rail', icon: '🚄', x: 70, y: 56, desc: '沪宁城际等线路，地铁1号线/3号线可达。' }
+                ]
+            },
+            {
+                id: 'guilin', name: '桂林', x: 58.8, y: 79.2, icon: '⛰️',
+                spots: [
+                    { name: '漓江', x: 50, y: 35, icon: '🚣', desc: '桂林山水精华，竹筏漂流是必体验项目，如诗如画。', tags: ['山水画卷', '漂流', '必游'] },
+                    { name: '阳朔西街', x: 70, y: 55, icon: '🌙', desc: '中西合璧古镇，背包客天堂，夜生活丰富。', tags: ['古镇', '夜生活', '文艺'] },
+                    { name: '象鼻山', x: 30, y: 50, icon: '🐘', desc: '桂林城徽，山形酷似象鼻，适合拍照打卡。', tags: ['地标', '自然奇观', '拍照'] },
+                    { name: '十里画廊', x: 60, y: 70, icon: '🎨', desc: '阳朔最美骑行路线，田园风光，租电动车游览。', tags: ['骑行', '田园', '免费'] },
+                    { name: '龙脊梯田', x: 20, y: 30, icon: '🌾', desc: '世界梯田之冠，壮瑶族风情，四季景色各异。', tags: ['梯田', '民族风情', '摄影'] }
+                ],
+                guide: {
+                    title: '桂林旅行攻略',
+                    content: '桂林是世界著名的风景游览城市，"桂林山水甲天下"享誉全球。4-10月是最佳旅游季节。',
+                    highlights: ['漓江：竹筏漂流是必体验项目，注意防晒', '阳朔：可以骑行十里画廊，比桂林市区更适合度假', '象鼻山：桂林的象征，适合拍照', '龙脊梯田：四季景色各异，摄影爱好者必去'],
+                    tip: '桂林米粉是当地特色早餐。阳朔比桂林市区更适合度假，建议住一晚。漓江漂流注意防晒！'
+                },
+                food: ['桂林米粉', '啤酒鱼', '荔浦芋扣肉', '阳朔糍粑', '螺蛳粉', '马蹄糕'],
+                tips: ['漓江漂流注意防晒', '阳朔住宿选择多', '4-10月是最佳旅游季节', '龙脊梯田需一日游', '十里画廊建议骑行'],
+                transport: [
+                    { name: '两江国际机场', type: 'airport', icon: '✈️', x: 61, y: 81, desc: '桂林主要机场，距市区约28km，机场大巴可达市区。' },
+                    { name: '桂林站', type: 'rail', icon: '🚄', x: 57, y: 80, desc: '湘桂铁路主要车站，可通达南宁、柳州等地。' },
+                    { name: '阳朔站', type: 'rail', icon: '🚄', x: 61, y: 78, desc: '高铁站，距阳朔县城约40km，需换乘大巴。' }
+                ]
+            },
+            {
+                id: 'lijiang', name: '丽江', x: 43.1, y: 73.3, icon: '🏔️',
+                spots: [
+                    { name: '丽江古城', x: 40, y: 50, icon: '🏘️', desc: '世界遗产，纳西族文化发源地，小桥流水古朴典雅。', tags: ['世界遗产', '古城', '免费'] },
+                    { name: '玉龙雪山', x: 60, y: 25, icon: '❄️', desc: '北半球最南端雪山，需提前订票，注意高原反应。', tags: ['雪山', '自然奇观', '必游'] },
+                    { name: '束河古镇', x: 25, y: 35, icon: '🏡', desc: '比丽江古城更宁静古朴，适合发呆放松。', tags: ['古镇', '宁静', '文艺'] },
+                    { name: '蓝月谷', x: 70, y: 35, icon: '💎', desc: '玉龙雪山脚下，湖水蓝如宝石，拍照绝美。', tags: ['自然风光', '拍照', '免费'] },
+                    { name: '泸沽湖', x: 15, y: 45, icon: '🌊', desc: '高原明珠，摩梭人母系文化，距离较远需一日游。', tags: ['高原湖泊', '民族风情', '一日游'] }
+                ],
+                guide: {
+                    title: '丽江旅行攻略',
+                    content: '丽江是云南著名旅游城市，以古城和雪山闻名，是浪漫的代名词。海拔较高，注意防晒和保暖。',
+                    highlights: ['古城：晚上酒吧街很热闹，白天适合漫步，古城维护费需购买', '玉龙雪山：需要提前订票，注意高原反应，穿羽绒服', '束河：比大研古城更安静，适合发呆', '蓝月谷：拍照绝美，不要错过'],
+                    tip: '丽江海拔较高，注意防晒和保暖。古城维护费需要购买。蓝月谷很美，不要错过。高原地区避免剧烈运动！'
+                },
+                food: ['腊排骨火锅', '鸡豆凉粉', '纳西烤鱼', '丽江粑粑', '黑山羊火锅', '水性杨花'],
+                tips: ['高原地区避免剧烈运动', '古城晚上人多注意财物', '雪山需穿羽绒服', '蓝月谷拍照绝美', '泸沽湖需一日游'],
+                transport: [
+                    { name: '三义国际机场', type: 'airport', icon: '✈️', x: 45, y: 72, desc: '丽江主要机场，距市区约28km，机场大巴/出租车可达。' },
+                    { name: '丽江站', type: 'rail', icon: '🚄', x: 42, y: 75, desc: '滇藏铁路丽江站，可通达大理、昆明。' }
+                ]
+            },
+            {
+                id: 'xiamen', name: '厦门', x: 71.3, y: 83.3, icon: '🌊',
+                spots: [
+                    { name: '鼓浪屿', x: 45, y: 40, icon: '🏝️', desc: '钢琴之岛，万国建筑博览，需乘船前往，建议早上。', tags: ['海岛', '文艺', '世界遗产'] },
+                    { name: '厦门大学', x: 60, y: 55, icon: '🏫', desc: '最美大学，芙蓉湖畔，芙蓉隧道必打卡，需预约。', tags: ['校园', '拍照', '免费'] },
+                    { name: '曾厝垵', x: 30, y: 60, icon: '🏘️', desc: '文艺渔村，小吃天堂，晚上热闹。', tags: ['文艺村', '美食', '夜市'] },
+                    { name: '环岛路', x: 50, y: 70, icon: '🚴', desc: '最美海滨骑行路线，沙滩海景，免费开放。', tags: ['骑行', '海滩', '免费'] },
+                    { name: '南普陀寺', x: 70, y: 45, icon: '⛩️', desc: '千年古刹，香火鼎盛，免费开放，素斋有名。', tags: ['佛教圣地', '免费', '祈福'] }
+                ],
+                guide: {
+                    title: '厦门旅行攻略',
+                    content: '厦门是福建省副省级市，海滨城市，以鼓浪屿和闽南文化闻名。夏季注意防晒，鼓浪屿船票需提前购买。',
+                    highlights: ['鼓浪屿：需要乘船，建议早上前往避开人流，船票需提前买', '厦大：需要提前预约，芙蓉隧道必打卡', '曾厝垵：晚上热闹，小吃种类多', '环岛路：适合骑行看海'],
+                    tip: '厦门环岛路适合骑行。中山路步行街适合购物和吃小吃。沙坡尾是文艺青年聚集地。夏季注意防晒！'
+                },
+                food: ['沙茶面', '海蛎煎', '土笋冻', '花生汤', '姜母鸭', '烧肉粽', '面线糊'],
+                tips: ['鼓浪屿船票需提前购买', '厦大限流需预约', '夏季注意防晒', '环岛路骑行很棒', '曾厝垵晚上去'],
+                transport: [
+                    { name: '高崎国际机场', type: 'airport', icon: '✈️', x: 73, y: 84, desc: '厦门主要机场，距市区约10km，地铁BRT/公交可达。' },
+                    { name: '厦门北站', type: 'rail', icon: '🚄', x: 70, y: 85, desc: '高铁枢纽，厦深铁路、龙厦铁路始发站。' },
+                    { name: '厦门站', type: 'rail', icon: '🚄', x: 72, y: 82, desc: '普速列车车站，地铁1号线可达。' }
+                ]
+            }
+        ];
+
+        let selectedSpots = [];
+        let currentCity = null;
+        let citySelectedSpots = [];
+        let currentTab = 'spots';
+
+        const mapContainer = document.getElementById('map');
+        const cityModal = document.getElementById('cityModal');
+
+        function initMap() {
+            cities.forEach(city => {
+                const marker = document.createElement('div');
+                marker.className = 'city-marker';
+                marker.style.left = `${city.x}%`;
+                marker.style.top = `${city.y}%`;
+                marker.dataset.cityId = city.id;
+                marker.innerHTML = `
+                    <div class="marker-pin">
+                        <div class="marker-dot"></div>
+                        <div class="marker-label">${city.icon} ${city.name}</div>
+                    </div>
+                `;
+                marker.addEventListener('click', () => openCityModal(city));
+                mapContainer.appendChild(marker);
+            });
+        }
+
+        function openCityModal(city) {
+            currentCity = city;
+            citySelectedSpots = [];
+            currentTab = 'spots';
+            document.getElementById('modalCityName').textContent = `${city.icon} ${city.name}`;
+            renderCityMap(city);
+            renderGuideContent(city);
+            cityModal.classList.add('active');
+        }
+
+        function closeCityModal() {
+            cityModal.classList.remove('active');
+            currentCity = null;
+            citySelectedSpots = [];
+        }
+
+        function renderCityMap(city) {
+            const cityMap = document.getElementById('cityMap');
+            const routeLineSvg = document.getElementById('routeLineSvg');
+            cityMap.querySelectorAll('.city-spot-marker').forEach(el => el.remove());
+            cityMap.querySelectorAll('.transport-marker').forEach(el => el.remove());
+            cityMap.querySelectorAll('.route-info-panel').forEach(el => el.remove());
+            routeLineSvg.innerHTML = '';
+            
+            // 渲染交通枢纽标记
+            if (city.transport) {
+                city.transport.forEach(t => {
+                    const marker = document.createElement('div');
+                    marker.className = 'transport-marker';
+                    marker.style.left = `${t.x}%`;
+                    marker.style.top = `${t.y}%`;
+                    marker.innerHTML = `
+                        <div class="transport-icon">${t.icon}</div>
+                        <div class="transport-label">${t.name.replace(/国际机场|机场|站/, '')}</div>
+                    `;
+                    marker.title = `${t.name}\n${t.desc}`;
+                    cityMap.appendChild(marker);
+                });
+            }
+            
+            // 渲染景点标记
+            city.spots.forEach((spot, index) => {
+                const marker = document.createElement('div');
+                marker.className = 'city-spot-marker';
+                marker.style.left = `${spot.x}%`;
+                marker.style.top = `${spot.y}%`;
+                marker.dataset.spotIndex = index;
+                marker.innerHTML = `
+                    <div class="spot-icon">${spot.icon}</div>
+                    <div class="spot-name-label">${spot.name}</div>
+                `;
+                marker.addEventListener('click', () => selectCitySpot(index));
+                cityMap.appendChild(marker);
+            });
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.guide-tab').forEach(t => {
+                const tabMap = { spots: '景点', guide: '攻略', food: '美食', transport: '交通', tips: '贴士' };
+                t.classList.toggle('active', t.textContent.includes(tabMap[tab] || ''));
+            });
+            renderGuideContent(currentCity);
+        }
+
+        function renderGuideContent(city) {
+            const container = document.getElementById('guideContentContainer');
+            
+            if (currentTab === 'spots') {
+                container.innerHTML = `
+                    <div class="spots-grid">
+                        ${city.spots.map((spot, index) => `
+                            <div class="spot-item" data-index="${index}" onclick="selectCitySpot(${index})">
+                                <div class="spot-item-header">
+                                    <span class="spot-item-icon">${spot.icon}</span>
+                                    <span class="spot-item-name">${spot.name}</span>
+                                </div>
+                                <p class="spot-item-desc">${spot.desc}</p>
+                                <div class="spot-item-tags">
+                                    ${spot.tags.map(tag => `<span class="spot-item-tag">${tag}</span>`).join('')}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <p style="text-align: center; color: #999; font-size: 0.8rem; margin-top: 12px;">
+                        💡 点击景点卡片或地图标记选择两个景点规划路线
+                    </p>
+                `;
+            } else if (currentTab === 'guide') {
+                container.innerHTML = `
+                    <div class="guide-card">
+                        <h4>📖 ${city.guide.title}</h4>
+                        <p>${city.guide.content}</p>
+                        <h4 style="margin-top: 12px;">⭐ 必游亮点</h4>
+                        <ul>
+                            ${city.guide.highlights.map(h => `<li>${h}</li>`).join('')}
+                        </ul>
+                        <div class="guide-tip">💡 ${city.guide.tip}</div>
+                    </div>
+                `;
+            } else if (currentTab === 'food') {
+                container.innerHTML = `
+                    <div class="guide-card">
+                        <h4>🍜 当地美食推荐</h4>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                            ${city.food.map(f => `
+                                <div style="background: linear-gradient(135deg, #FFE66D 0%, #FFD93D 100%); padding: 6px 12px; border-radius: 15px; font-size: 0.85rem;">
+                                    ${f}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <p style="margin-top: 12px; font-size: 0.8rem; color: #666;">
+                            💡 建议在当地人气餐厅品尝正宗风味，可以参考大众点评或询问当地人推荐。
+                        </p>
+                    </div>
+                `;
+            } else if (currentTab === 'tips') {
+                container.innerHTML = `
+                    <div class="guide-card">
+                        <h4>💡 实用贴士</h4>
+                        <ul>
+                            ${city.tips.map(t => `<li>${t}</li>`).join('')}
+                        </ul>
+                        <div class="guide-tip" style="margin-top: 12px;">
+                            🎒 旅行小贴士：提前查看天气预报，准备好舒适的鞋子，保持愉快的心情！
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'transport') {
+                const airports = city.transport.filter(t => t.type === 'airport');
+                const rails = city.transport.filter(t => t.type === 'rail');
+                container.innerHTML = `
+                    <div class="guide-card">
+                        <h4>✈️ 机场</h4>
+                        ${airports.map(a => `
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #F0F8FF; border-radius: 10px; margin-bottom: 8px;">
+                                <span style="font-size: 1.5rem;">${a.icon}</span>
+                                <div>
+                                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-dark);">${a.name}</div>
+                                    <div style="font-size: 0.8rem; color: #666; margin-top: 2px;">${a.desc}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="guide-card">
+                        <h4>🚄 火车站/高铁站</h4>
+                        ${rails.map(r => `
+                            <div style="display: flex; align-items: center; gap: 10px; padding: 10px; background: #F0FFF0; border-radius: 10px; margin-bottom: 8px;">
+                                <span style="font-size: 1.5rem;">${r.icon}</span>
+                                <div>
+                                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--text-dark);">${r.name}</div>
+                                    <div style="font-size: 0.8rem; color: #666; margin-top: 2px;">${r.desc}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="guide-tip">
+                        💡 交通提示：建议优先选择高铁出行，快捷舒适。机场提前2小时到达，节假日需更早。
+                    </div>
+                `;
+            }
+        }
+
+        function selectCitySpot(index) {
+            if (!currentCity) return;
+            const spot = currentCity.spots[index];
+            const existIndex = citySelectedSpots.findIndex(s => s.index === index);
+            
+            if (existIndex !== -1) {
+                citySelectedSpots.splice(existIndex, 1);
+            } else {
+                if (citySelectedSpots.length >= 2) citySelectedSpots.shift();
+                citySelectedSpots.push({ index, spot });
+            }
+            
+            updateCitySpotSelection();
+            
+            if (citySelectedSpots.length === 2) {
+                drawRouteLine();
+                showRouteInfoPanel();
+            } else {
+                document.getElementById('routeLineSvg').innerHTML = '';
+                const panel = document.getElementById('cityMap').querySelector('.route-info-panel');
+                if (panel) panel.remove();
+            }
+        }
+
+        function updateCitySpotSelection() {
+            document.querySelectorAll('.spot-item').forEach((item, index) => {
+                item.classList.toggle('selected', citySelectedSpots.some(s => s.index === index));
+            });
+            
+            document.querySelectorAll('.city-spot-marker').forEach((marker, index) => {
+                const isSelected = citySelectedSpots.some(s => s.index === index);
+                marker.style.transform = isSelected ? 'translate(-50%, -50%) scale(1.2)' : 'translate(-50%, -50%)';
+                marker.querySelector('.spot-icon').style.background = isSelected 
+                    ? 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)' 
+                    : 'linear-gradient(135deg, #FFE66D 0%, #FFD93D 100%)';
+            });
+        }
+
+        function drawRouteLine() {
+            const svg = document.getElementById('routeLineSvg');
+            const spot1 = citySelectedSpots[0].spot;
+            const spot2 = citySelectedSpots[1].spot;
+            svg.innerHTML = `<line class="route-line-path" x1="${spot1.x}%" y1="${spot1.y}%" x2="${spot2.x}%" y2="${spot2.y}%" />`;
+        }
+
+        function showRouteInfoPanel() {
+            const cityMap = document.getElementById('cityMap');
+            let panel = cityMap.querySelector('.route-info-panel');
+            if (!panel) {
+                panel = document.createElement('div');
+                panel.className = 'route-info-panel';
+                cityMap.appendChild(panel);
+            }
+            
+            const spot1 = citySelectedSpots[0].spot;
+            const spot2 = citySelectedSpots[1].spot;
+            
+            panel.innerHTML = `
+                <h5>🛤️ ${spot1.name} → ${spot2.name}</h5>
+                <div class="route-options-mini">
+                    <div class="route-option-mini">
+                        <div class="icon">🚗</div>
+                        <div class="name">打车/自驾</div>
+                        <div class="time">约20-40分钟</div>
+                    </div>
+                    <div class="route-option-mini">
+                        <div class="icon">🚌</div>
+                        <div class="name">公共交通</div>
+                        <div class="time">约30-60分钟</div>
+                    </div>
+                    <div class="route-option-mini">
+                        <div class="icon">🚶</div>
+                        <div class="name">步行</div>
+                        <div class="time">约30-90分钟</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        cityModal.addEventListener('click', (e) => { if (e.target === cityModal) closeCityModal(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeCityModal(); });
+
+        // 拖拽分隔条逻辑
+        (function initResizer() {
+            const resizer = document.getElementById('resizer');
+            const mapSection = document.querySelector('.map-section');
+            const sidebar = document.querySelector('.sidebar');
+            const container = document.querySelector('.main-container');
+            let isResizing = false;
+
+            resizer.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                resizer.classList.add('active');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                const containerRect = container.getBoundingClientRect();
+                const offset = e.clientX - containerRect.left;
+                const totalWidth = containerRect.width;
+                const mapRatio = Math.max(0.3, Math.min(0.75, offset / totalWidth));
+                const sidebarRatio = 1 - mapRatio;
+                
+                mapSection.style.flex = `${mapRatio}`;
+                sidebar.style.flex = `${sidebarRatio}`;
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    resizer.classList.remove('active');
+                    document.body.style.cursor = '';
+                    document.body.style.userSelect = '';
+                }
+            });
+        })();
+
+        initMap();
+    </script>
+</body>
+</html>
