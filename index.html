@@ -1674,7 +1674,761 @@
                 highSpeedRail: { time: '10-12小时', price: 700, detail: '需中转' },
                 train: { time: '26-30小时', price: 380, detail: '硬卧' },
                 driving: { time: '18小时', price: 1000, detail: '约1800km' }
-            }
+            },
+            'tianjin-beijing': {
+                flight: { time: '0.5小时', price: 200, detail: '每日5+班次' },
+                highSpeedRail: { time: '0.5小时', price: 54, detail: '京津城际 二等座' },
+                train: { time: '2小时', price: 50, detail: '普速' },
+                driving: { time: '2小时', price: 150, detail: '约130km' }
+            },
+            'tianjin-shanghai': {
+                flight: { time: '2小时', price: 400, detail: '每日10+班次' },
+                highSpeedRail: { time: '5小时', price: 388, detail: '二等座' },
+                train: { time: '12-15小时', price: 200, detail: '硬卧' },
+                driving: { time: '11小时', price: 600, detail: '约1100km' }
+            },
+            'tianjin-nanjing': {
+                flight: { time: '2小时', price: 350, detail: '每日5+班次' },
+                highSpeedRail: { time: '3.5小时', price: 285, detail: '二等座' },
+                train: { time: '10-12小时', price: 180, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约900km' }
+            },
+            'tianjin-xian': {
+                flight: { time: '2小时', price: 500, detail: '每日5+班次' },
+                highSpeedRail: { time: '6小时', price: 520, detail: '二等座' },
+                train: { time: '15-18小时', price: 260, detail: '硬卧' },
+                driving: { time: '12小时', price: 650, detail: '约1100km' }
+            },
+            'tianjin-hangzhou': {
+                flight: { time: '2小时', price: 450, detail: '每日5+班次' },
+                highSpeedRail: { time: '5.5小时', price: 480, detail: '二等座' },
+                train: { time: '14-16小时', price: 220, detail: '硬卧' },
+                driving: { time: '12小时', price: 650, detail: '约1200km' }
+            },
+            'wuhan-beijing': {
+                flight: { time: '2小时', price: 600, detail: '每日15+班次' },
+                highSpeedRail: { time: '4小时', price: 520, detail: '二等座' },
+                train: { time: '12-15小时', price: 250, detail: '硬卧' },
+                driving: { time: '11小时', price: 600, detail: '约1100km' }
+            },
+            'wuhan-shanghai': {
+                flight: { time: '1.5小时', price: 400, detail: '每日20+班次' },
+                highSpeedRail: { time: '4小时', price: 410, detail: '二等座' },
+                train: { time: '10-12小时', price: 200, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约850km' }
+            },
+            'wuhan-chengdu': {
+                flight: { time: '2小时', price: 500, detail: '每日10+班次' },
+                highSpeedRail: { time: '8小时', price: 640, detail: '二等座' },
+                train: { time: '15-18小时', price: 300, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1200km' }
+            },
+            'wuhan-xian': {
+                flight: { time: '1.5小时', price: 450, detail: '每日10+班次' },
+                highSpeedRail: { time: '4小时', price: 460, detail: '二等座' },
+                train: { time: '10-12小时', price: 220, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约850km' }
+            },
+            'wuhan-guangzhou': {
+                flight: { time: '1.5小时', price: 400, detail: '每日15+班次' },
+                highSpeedRail: { time: '4小时', price: 465, detail: '二等座' },
+                train: { time: '12-14小时', price: 230, detail: '硬卧' },
+                driving: { time: '10小时', price: 550, detail: '约1000km' }
+            },
+            'wuhan-chongqing': {
+                flight: { time: '1.5小时', price: 450, detail: '每日10+班次' },
+                highSpeedRail: { time: '6小时', price: 510, detail: '二等座' },
+                train: { time: '14-16小时', price: 280, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1100km' }
+            },
+            'wuhan-hangzhou': {
+                flight: { time: '1.5小时', price: 350, detail: '每日10+班次' },
+                highSpeedRail: { time: '5小时', price: 480, detail: '二等座' },
+                train: { time: '10-12小时', price: 200, detail: '硬卧' },
+                driving: { time: '8小时', price: 450, detail: '约800km' }
+            },
+            'wuhan-nanjing': {
+                flight: { time: '1小时', price: 300, detail: '每日10+班次' },
+                highSpeedRail: { time: '1.5小时', price: 200, detail: '二等座' },
+                train: { time: '8-10小时', price: 150, detail: '硬卧' },
+                driving: { time: '6小时', price: 350, detail: '约550km' }
+            },
+            'wuhan-guilin': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '5小时', price: 480, detail: '二等座' },
+                train: { time: '12-14小时', price: 250, detail: '硬卧' },
+                driving: { time: '10小时', price: 550, detail: '约950km' }
+            },
+            'wuhan-xiamen': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '5小时', price: 480, detail: '二等座' },
+                train: { time: '12-14小时', price: 240, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约900km' }
+            },
+            'zhengzhou-beijing': {
+                flight: { time: '1.5小时', price: 400, detail: '每日10+班次' },
+                highSpeedRail: { time: '2.5小时', price: 310, detail: '二等座' },
+                train: { time: '8-10小时', price: 150, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约700km' }
+            },
+            'zhengzhou-shanghai': {
+                flight: { time: '2小时', price: 450, detail: '每日10+班次' },
+                highSpeedRail: { time: '4小时', price: 390, detail: '二等座' },
+                train: { time: '10-12小时', price: 200, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约900km' }
+            },
+            'zhengzhou-xian': {
+                flight: { time: '1.5小时', price: 400, detail: '每日10+班次' },
+                highSpeedRail: { time: '2小时', price: 260, detail: '二等座' },
+                train: { time: '6-8小时', price: 130, detail: '硬卧' },
+                driving: { time: '5小时', price: 300, detail: '约500km' }
+            },
+            'zhengzhou-chengdu': {
+                flight: { time: '2小时', price: 500, detail: '每日8+班次' },
+                highSpeedRail: { time: '5小时', price: 500, detail: '二等座' },
+                train: { time: '14-16小时', price: 280, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1100km' }
+            },
+            'zhengzhou-wuhan': {
+                flight: { time: '1小时', price: 300, detail: '每日8+班次' },
+                highSpeedRail: { time: '2小时', price: 240, detail: '二等座' },
+                train: { time: '6-8小时', price: 120, detail: '硬卧' },
+                driving: { time: '5小时', price: 300, detail: '约500km' }
+            },
+            'zhengzhou-guangzhou': {
+                flight: { time: '2.5小时', price: 600, detail: '每日10+班次' },
+                highSpeedRail: { time: '5小时', price: 530, detail: '二等座' },
+                train: { time: '14-16小时', price: 280, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1400km' }
+            },
+            'zhengzhou-nanjing': {
+                flight: { time: '1.5小时', price: 350, detail: '每日5+班次' },
+                highSpeedRail: { time: '3小时', price: 330, detail: '二等座' },
+                train: { time: '8-10小时', price: 170, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约650km' }
+            },
+            'zhengzhou-hangzhou': {
+                flight: { time: '2小时', price: 450, detail: '每日8+班次' },
+                highSpeedRail: { time: '4.5小时', price: 430, detail: '二等座' },
+                train: { time: '12-14小时', price: 220, detail: '硬卧' },
+                driving: { time: '10小时', price: 550, detail: '约950km' }
+            },
+            'changsha-beijing': {
+                flight: { time: '2.5小时', price: 600, detail: '每日10+班次' },
+                highSpeedRail: { time: '5.5小时', price: 650, detail: '二等座' },
+                train: { time: '14-16小时', price: 300, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1400km' }
+            },
+            'changsha-shanghai': {
+                flight: { time: '2小时', price: 500, detail: '每日15+班次' },
+                highSpeedRail: { time: '5小时', price: 490, detail: '二等座' },
+                train: { time: '12-14小时', price: 250, detail: '硬卧' },
+                driving: { time: '11小时', price: 600, detail: '约1100km' }
+            },
+            'changsha-guangzhou': {
+                flight: { time: '1小时', price: 300, detail: '每日15+班次' },
+                highSpeedRail: { time: '2.5小时', price: 314, detail: '二等座' },
+                train: { time: '7-8小时', price: 150, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约700km' }
+            },
+            'changsha-chengdu': {
+                flight: { time: '2小时', price: 500, detail: '每日8+班次' },
+                highSpeedRail: { time: '7小时', price: 580, detail: '二等座' },
+                train: { time: '16-18小时', price: 300, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1300km' }
+            },
+            'changsha-xian': {
+                flight: { time: '2小时', price: 450, detail: '每日5+班次' },
+                highSpeedRail: { time: '5小时', price: 490, detail: '二等座' },
+                train: { time: '12-14小时', price: 250, detail: '硬卧' },
+                driving: { time: '11小时', price: 600, detail: '约1000km' }
+            },
+            'changsha-chongqing': {
+                flight: { time: '1.5小时', price: 450, detail: '每日8+班次' },
+                highSpeedRail: { time: '6小时', price: 510, detail: '二等座' },
+                train: { time: '14-16小时', price: 280, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1100km' }
+            },
+            'changsha-hangzhou': {
+                flight: { time: '1.5小时', price: 400, detail: '每日8+班次' },
+                highSpeedRail: { time: '4.5小时', price: 440, detail: '二等座' },
+                train: { time: '10-12小时', price: 220, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约900km' }
+            },
+            'changsha-nanjing': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '4.5小时', price: 450, detail: '二等座' },
+                train: { time: '10-12小时', price: 220, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约850km' }
+            },
+            'changsha-guilin': {
+                flight: { time: '1小时', price: 350, detail: '每日5+班次' },
+                highSpeedRail: { time: '3小时', price: 320, detail: '二等座' },
+                train: { time: '8-10小时', price: 180, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约650km' }
+            },
+            'changsha-xiamen': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '4.5小时', price: 400, detail: '二等座' },
+                train: { time: '10-12小时', price: 220, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约850km' }
+            },
+            'shenzhen-beijing': {
+                flight: { time: '3小时', price: 700, detail: '每日30+班次' },
+                highSpeedRail: { time: '8.5小时', price: 900, detail: '二等座' },
+                train: { time: '20-24小时', price: 380, detail: '硬卧' },
+                driving: { time: '20小时', price: 1200, detail: '约2100km' }
+            },
+            'shenzhen-shanghai': {
+                flight: { time: '2.5小时', price: 600, detail: '每日25+班次' },
+                highSpeedRail: { time: '7小时', price: 680, detail: '二等座' },
+                train: { time: '16-18小时', price: 350, detail: '硬卧' },
+                driving: { time: '15小时', price: 900, detail: '约1500km' }
+            },
+            'shenzhen-chengdu': {
+                flight: { time: '2.5小时', price: 650, detail: '每日15+班次' },
+                highSpeedRail: { time: '8小时', price: 780, detail: '二等座' },
+                train: { time: '22-26小时', price: 400, detail: '硬卧' },
+                driving: { time: '20小时', price: 1200, detail: '约1800km' }
+            },
+            'shenzhen-xian': {
+                flight: { time: '2.5小时', price: 650, detail: '每日10+班次' },
+                highSpeedRail: { time: '9小时', price: 800, detail: '二等座' },
+                train: { time: '22-26小时', price: 380, detail: '硬卧' },
+                driving: { time: '18小时', price: 1100, detail: '约1700km' }
+            },
+            'shenzhen-hangzhou': {
+                flight: { time: '2小时', price: 500, detail: '每日15+班次' },
+                highSpeedRail: { time: '6小时', price: 620, detail: '二等座' },
+                train: { time: '14-16小时', price: 300, detail: '硬卧' },
+                driving: { time: '13小时', price: 750, detail: '约1300km' }
+            },
+            'shenzhen-chongqing': {
+                flight: { time: '2.5小时', price: 600, detail: '每日10+班次' },
+                highSpeedRail: { time: '8小时', price: 780, detail: '二等座' },
+                train: { time: '22-26小时', price: 400, detail: '硬卧' },
+                driving: { time: '18小时', price: 1100, detail: '约1700km' }
+            },
+            'shenzhen-nanjing': {
+                flight: { time: '2小时', price: 500, detail: '每日10+班次' },
+                highSpeedRail: { time: '6.5小时', price: 680, detail: '二等座' },
+                train: { time: '14-16小时', price: 300, detail: '硬卧' },
+                driving: { time: '13小时', price: 750, detail: '约1300km' }
+            },
+            'shenzhen-guilin': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '3小时', price: 280, detail: '二等座' },
+                train: { time: '10-12小时', price: 230, detail: '硬卧' },
+                driving: { time: '8小时', price: 450, detail: '约750km' }
+            },
+            'shenzhen-xiamen': {
+                flight: { time: '1小时', price: 300, detail: '每日15+班次' },
+                highSpeedRail: { time: '3.5小时', price: 300, detail: '二等座' },
+                train: { time: '8-10小时', price: 180, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约650km' }
+            },
+            'shenzhen-wuhan': {
+                flight: { time: '1.5小时', price: 450, detail: '每日15+班次' },
+                highSpeedRail: { time: '4.5小时', price: 540, detail: '二等座' },
+                train: { time: '12-14小时', price: 280, detail: '硬卧' },
+                driving: { time: '10小时', price: 550, detail: '约1000km' }
+            },
+            'shenzhen-changsha': {
+                flight: { time: '1小时', price: 300, detail: '每日15+班次' },
+                highSpeedRail: { time: '3小时', price: 390, detail: '二等座' },
+                train: { time: '8-10小时', price: 180, detail: '硬卧' },
+                driving: { time: '8小时', price: 450, detail: '约750km' }
+            },
+            'sanya-beijing': {
+                flight: { time: '4小时', price: 900, detail: '每日10+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '-', price: '-', detail: '无直达火车' },
+                driving: { time: '30小时', price: 1800, detail: '约2800km' }
+            },
+            'sanya-shanghai': {
+                flight: { time: '3小时', price: 800, detail: '每日10+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '-', price: '-', detail: '无直达火车' },
+                driving: { time: '26小时', price: 1600, detail: '约2400km' }
+            },
+            'sanya-guangzhou': {
+                flight: { time: '1.5小时', price: 500, detail: '每日15+班次' },
+                highSpeedRail: { time: '4小时', price: 280, detail: '环岛高铁+粤海铁路' },
+                train: { time: '15-18小时', price: 250, detail: '需轮渡' },
+                driving: { time: '16小时', price: 1000, detail: '约1400km' }
+            },
+            'sanya-shenzhen': {
+                flight: { time: '1.5小时', price: 500, detail: '每日10+班次' },
+                highSpeedRail: { time: '5小时', price: 350, detail: '需中转' },
+                train: { time: '-', price: '-', detail: '无直达' },
+                driving: { time: '15小时', price: 950, detail: '约1300km' }
+            },
+            'sanya-chengdu': {
+                flight: { time: '2.5小时', price: 700, detail: '每日5+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '-', price: '-', detail: '无直达火车' },
+                driving: { time: '24小时', price: 1500, detail: '约2200km' }
+            },
+            'sanya-xiamen': {
+                flight: { time: '2小时', price: 600, detail: '每日5+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '-', price: '-', detail: '无直达火车' },
+                driving: { time: '18小时', price: 1100, detail: '约1600km' }
+            },
+            'sanya-changsha': {
+                flight: { time: '2小时', price: 600, detail: '每日5+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '-', price: '-', detail: '无直达火车' },
+                driving: { time: '18小时', price: 1100, detail: '约1600km' }
+            },
+            'kunming-beijing': {
+                flight: { time: '3.5小时', price: 800, detail: '每日15+班次' },
+                highSpeedRail: { time: '12小时', price: 1100, detail: '二等座' },
+                train: { time: '30-36小时', price: 450, detail: '硬卧' },
+                driving: { time: '26小时', price: 1500, detail: '约2500km' }
+            },
+            'kunming-shanghai': {
+                flight: { time: '3小时', price: 700, detail: '每日15+班次' },
+                highSpeedRail: { time: '12小时', price: 890, detail: '二等座' },
+                train: { time: '30-36小时', price: 450, detail: '硬卧' },
+                driving: { time: '25小时', price: 1500, detail: '约2400km' }
+            },
+            'kunming-chengdu': {
+                flight: { time: '2小时', price: 500, detail: '每日10+班次' },
+                highSpeedRail: { time: '6小时', price: 500, detail: '二等座' },
+                train: { time: '16-18小时', price: 300, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1100km' }
+            },
+            'kunming-guangzhou': {
+                flight: { time: '2.5小时', price: 600, detail: '每日10+班次' },
+                highSpeedRail: { time: '7小时', price: 480, detail: '二等座' },
+                train: { time: '20-24小时', price: 350, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1700km' }
+            },
+            'kunming-xian': {
+                flight: { time: '2.5小时', price: 600, detail: '每日8+班次' },
+                highSpeedRail: { time: '10小时', price: 680, detail: '二等座' },
+                train: { time: '24-28小时', price: 400, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1700km' }
+            },
+            'kunming-guilin': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '5小时', price: 400, detail: '二等座' },
+                train: { time: '14-16小时', price: 280, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1100km' }
+            },
+            'kunming-lijiang': {
+                flight: { time: '1小时', price: 300, detail: '每日10+班次' },
+                highSpeedRail: { time: '3.5小时', price: 220, detail: '二等座' },
+                train: { time: '8-10小时', price: 150, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约600km' }
+            },
+            'kunming-chongqing': {
+                flight: { time: '2小时', price: 500, detail: '每日10+班次' },
+                highSpeedRail: { time: '5小时', price: 460, detail: '二等座' },
+                train: { time: '14-16小时', price: 280, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1100km' }
+            },
+            'kunming-hangzhou': {
+                flight: { time: '3小时', price: 650, detail: '每日8+班次' },
+                highSpeedRail: { time: '10小时', price: 780, detail: '二等座' },
+                train: { time: '28-32小时', price: 420, detail: '硬卧' },
+                driving: { time: '22小时', price: 1300, detail: '约2100km' }
+            },
+            'kunming-nanjing': {
+                flight: { time: '3小时', price: 650, detail: '每日5+班次' },
+                highSpeedRail: { time: '10小时', price: 780, detail: '二等座' },
+                train: { time: '28-32小时', price: 420, detail: '硬卧' },
+                driving: { time: '22小时', price: 1300, detail: '约2100km' }
+            },
+            'kunming-xiamen': {
+                flight: { time: '2.5小时', price: 550, detail: '每日5+班次' },
+                highSpeedRail: { time: '8小时', price: 600, detail: '二等座' },
+                train: { time: '22-26小时', price: 380, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1700km' }
+            },
+            'harbin-beijing': {
+                flight: { time: '2小时', price: 500, detail: '每日15+班次' },
+                highSpeedRail: { time: '5小时', price: 540, detail: '二等座' },
+                train: { time: '12-15小时', price: 250, detail: '硬卧' },
+                driving: { time: '12小时', price: 650, detail: '约1200km' }
+            },
+            'harbin-shanghai': {
+                flight: { time: '3小时', price: 700, detail: '每日10+班次' },
+                highSpeedRail: { time: '13小时', price: 1100, detail: '二等座' },
+                train: { time: '24-28小时', price: 450, detail: '硬卧' },
+                driving: { time: '22小时', price: 1300, detail: '约2200km' }
+            },
+            'harbin-xian': {
+                flight: { time: '3小时', price: 650, detail: '每日5+班次' },
+                highSpeedRail: { time: '10小时', price: 800, detail: '二等座' },
+                train: { time: '22-26小时', price: 400, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1800km' }
+            },
+            'harbin-nanjing': {
+                flight: { time: '2.5小时', price: 600, detail: '每日5+班次' },
+                highSpeedRail: { time: '11小时', price: 950, detail: '二等座' },
+                train: { time: '22-26小时', price: 400, detail: '硬卧' },
+                driving: { time: '20小时', price: 1200, detail: '约2000km' }
+            },
+            'harbin-hangzhou': {
+                flight: { time: '3小时', price: 700, detail: '每日5+班次' },
+                highSpeedRail: { time: '13小时', price: 1100, detail: '二等座' },
+                train: { time: '26-30小时', price: 480, detail: '硬卧' },
+                driving: { time: '24小时', price: 1400, detail: '约2400km' }
+            },
+            'harbin-dalian': {
+                flight: { time: '1小时', price: 300, detail: '每日10+班次' },
+                highSpeedRail: { time: '2小时', price: 220, detail: '二等座' },
+                train: { time: '5-6小时', price: 120, detail: '硬卧' },
+                driving: { time: '6小时', price: 350, detail: '约550km' }
+            },
+            'qingdao-beijing': {
+                flight: { time: '1.5小时', price: 400, detail: '每日10+班次' },
+                highSpeedRail: { time: '3小时', price: 360, detail: '二等座' },
+                train: { time: '8-10小时', price: 180, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约650km' }
+            },
+            'qingdao-shanghai': {
+                flight: { time: '1.5小时', price: 400, detail: '每日15+班次' },
+                highSpeedRail: { time: '7小时', price: 560, detail: '二等座' },
+                train: { time: '14-16小时', price: 300, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约850km' }
+            },
+            'qingdao-xian': {
+                flight: { time: '2小时', price: 500, detail: '每日5+班次' },
+                highSpeedRail: { time: '6小时', price: 560, detail: '二等座' },
+                train: { time: '16-18小时', price: 300, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1100km' }
+            },
+            'qingdao-hangzhou': {
+                flight: { time: '2小时', price: 450, detail: '每日8+班次' },
+                highSpeedRail: { time: '7.5小时', price: 620, detail: '二等座' },
+                train: { time: '16-18小时', price: 320, detail: '硬卧' },
+                driving: { time: '11小时', price: 650, detail: '约1050km' }
+            },
+            'qingdao-nanjing': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '5.5小时', price: 510, detail: '二等座' },
+                train: { time: '12-14小时', price: 260, detail: '硬卧' },
+                driving: { time: '8小时', price: 450, detail: '约800km' }
+            },
+            'qingdao-dalian': {
+                flight: { time: '1小时', price: 250, detail: '每日5+班次' },
+                highSpeedRail: { time: '4小时', price: 350, detail: '二等座' },
+                train: { time: '8-10小时', price: 180, detail: '硬卧' },
+                driving: { time: '6小时', price: 350, detail: '约550km' }
+            },
+            'dalian-beijing': {
+                flight: { time: '1.5小时', price: 400, detail: '每日10+班次' },
+                highSpeedRail: { time: '4.5小时', price: 400, detail: '二等座' },
+                train: { time: '10-12小时', price: 200, detail: '硬卧' },
+                driving: { time: '8小时', price: 450, detail: '约800km' }
+            },
+            'dalian-shanghai': {
+                flight: { time: '2小时', price: 500, detail: '每日10+班次' },
+                highSpeedRail: { time: '11小时', price: 900, detail: '二等座' },
+                train: { time: '20-24小时', price: 400, detail: '硬卧' },
+                driving: { time: '16小时', price: 950, detail: '约1500km' }
+            },
+            'dalian-nanjing': {
+                flight: { time: '2小时', price: 450, detail: '每日5+班次' },
+                highSpeedRail: { time: '9小时', price: 750, detail: '二等座' },
+                train: { time: '18-20小时', price: 350, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1300km' }
+            },
+            'dalian-xian': {
+                flight: { time: '2.5小时', price: 550, detail: '每日5+班次' },
+                highSpeedRail: { time: '10小时', price: 800, detail: '二等座' },
+                train: { time: '20-24小时', price: 380, detail: '硬卧' },
+                driving: { time: '16小时', price: 900, detail: '约1500km' }
+            },
+            'dalian-hangzhou': {
+                flight: { time: '2.5小时', price: 550, detail: '每日5+班次' },
+                highSpeedRail: { time: '11小时', price: 900, detail: '二等座' },
+                train: { time: '22-26小时', price: 420, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1700km' }
+            },
+            'suzhou-beijing': {
+                flight: { time: '2小时', price: 500, detail: '每日8+班次' },
+                highSpeedRail: { time: '5小时', price: 550, detail: '二等座' },
+                train: { time: '12-15小时', price: 250, detail: '硬卧' },
+                driving: { time: '12小时', price: 650, detail: '约1200km' }
+            },
+            'suzhou-shanghai': {
+                flight: { time: '-', price: '-', detail: '距离太近无航班' },
+                highSpeedRail: { time: '0.5小时', price: 40, detail: '二等座' },
+                train: { time: '1.5小时', price: 30, detail: '普速' },
+                driving: { time: '1.5小时', price: 80, detail: '约100km' }
+            },
+            'suzhou-hangzhou': {
+                flight: { time: '-', price: '-', detail: '距离太近无航班' },
+                highSpeedRail: { time: '1.5小时', price: 120, detail: '二等座' },
+                train: { time: '3-4小时', price: 60, detail: '普速' },
+                driving: { time: '3小时', price: 200, detail: '约250km' }
+            },
+            'suzhou-nanjing': {
+                flight: { time: '-', price: '-', detail: '距离太近无航班' },
+                highSpeedRail: { time: '1小时', price: 100, detail: '二等座' },
+                train: { time: '2.5小时', price: 50, detail: '普速' },
+                driving: { time: '2.5小时', price: 150, detail: '约200km' }
+            },
+            'suzhou-xian': {
+                flight: { time: '2.5小时', price: 550, detail: '每日5+班次' },
+                highSpeedRail: { time: '6小时', price: 530, detail: '二等座' },
+                train: { time: '14-16小时', price: 280, detail: '硬卧' },
+                driving: { time: '12小时', price: 650, detail: '约1200km' }
+            },
+            'suzhou-chengdu': {
+                flight: { time: '3小时', price: 700, detail: '每日8+班次' },
+                highSpeedRail: { time: '10小时', price: 800, detail: '二等座' },
+                train: { time: '22-26小时', price: 400, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1800km' }
+            },
+            'suzhou-guangzhou': {
+                flight: { time: '2.5小时', price: 600, detail: '每日10+班次' },
+                highSpeedRail: { time: '8小时', price: 750, detail: '二等座' },
+                train: { time: '16-18小时', price: 350, detail: '硬卧' },
+                driving: { time: '15小时', price: 850, detail: '约1500km' }
+            },
+            'suzhou-chongqing': {
+                flight: { time: '3小时', price: 700, detail: '每日5+班次' },
+                highSpeedRail: { time: '10小时', price: 800, detail: '二等座' },
+                train: { time: '22-26小时', price: 400, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1800km' }
+            },
+            'suzhou-guilin': {
+                flight: { time: '2.5小时', price: 550, detail: '每日5+班次' },
+                highSpeedRail: { time: '8小时', price: 650, detail: '二等座' },
+                train: { time: '16-18小时', price: 350, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1400km' }
+            },
+            'suzhou-xiamen': {
+                flight: { time: '2小时', price: 500, detail: '每日5+班次' },
+                highSpeedRail: { time: '6.5小时', price: 580, detail: '二等座' },
+                train: { time: '14-16小时', price: 300, detail: '硬卧' },
+                driving: { time: '12小时', price: 650, detail: '约1200km' }
+            },
+            'lhasa-beijing': {
+                flight: { time: '4小时', price: 1200, detail: '每日3-5班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '40小时', price: 360, detail: '硬卧 青藏铁路' },
+                driving: { time: '38小时', price: 2500, detail: '约3700km' }
+            },
+            'lhasa-shanghai': {
+                flight: { time: '4.5小时', price: 1300, detail: '每日2-3班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '48小时', price: 400, detail: '硬卧 需中转' },
+                driving: { time: '40小时', price: 2600, detail: '约4000km' }
+            },
+            'lhasa-chengdu': {
+                flight: { time: '2.5小时', price: 900, detail: '每日5+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '36小时', price: 330, detail: '硬卧' },
+                driving: { time: '30小时', price: 2000, detail: '约2200km' }
+            },
+            'lhasa-xian': {
+                flight: { time: '3小时', price: 1000, detail: '每日3-5班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '30小时', price: 300, detail: '硬卧' },
+                driving: { time: '28小时', price: 1800, detail: '约2800km' }
+            },
+            'lhasa-kunming': {
+                flight: { time: '2.5小时', price: 900, detail: '每日3-5班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '30小时', price: 300, detail: '硬卧' },
+                driving: { time: '26小时', price: 1600, detail: '约2000km' }
+            },
+            'lhasa-chongqing': {
+                flight: { time: '2.5小时', price: 900, detail: '每日3-5班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '36小时', price: 350, detail: '硬卧' },
+                driving: { time: '28小时', price: 1800, detail: '约2400km' }
+            },
+            'urumqi-beijing': {
+                flight: { time: '4小时', price: 1000, detail: '每日10+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '30-36小时', price: 450, detail: '硬卧' },
+                driving: { time: '30小时', price: 2000, detail: '约3200km' }
+            },
+            'urumqi-shanghai': {
+                flight: { time: '5小时', price: 1200, detail: '每日5+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '36-40小时', price: 500, detail: '硬卧' },
+                driving: { time: '35小时', price: 2200, detail: '约3800km' }
+            },
+            'urumqi-xian': {
+                flight: { time: '3.5小时', price: 800, detail: '每日5+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '24-28小时', price: 400, detail: '硬卧' },
+                driving: { time: '22小时', price: 1300, detail: '约2500km' }
+            },
+            'urumqi-chengdu': {
+                flight: { time: '4小时', price: 1000, detail: '每日5+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '30-36小时', price: 450, detail: '硬卧' },
+                driving: { time: '28小时', price: 1600, detail: '约2800km' }
+            },
+            'dali-beijing': {
+                flight: { time: '4小时', price: 900, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '30-36小时', price: 400, detail: '硬卧 需中转' },
+                driving: { time: '28小时', price: 1600, detail: '约2600km' }
+            },
+            'dali-shanghai': {
+                flight: { time: '3.5小时', price: 800, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '30-36小时', price: 400, detail: '硬卧 需中转' },
+                driving: { time: '26小时', price: 1500, detail: '约2500km' }
+            },
+            'dali-kunming': {
+                flight: { time: '1小时', price: 300, detail: '每日5+班次' },
+                highSpeedRail: { time: '2小时', price: 150, detail: '二等座' },
+                train: { time: '6-8小时', price: 100, detail: '硬卧' },
+                driving: { time: '5小时', price: 300, detail: '约350km' }
+            },
+            'dali-lijiang': {
+                flight: { time: '-', price: '-', detail: '距离太近无航班' },
+                highSpeedRail: { time: '-', price: '-', detail: '无高铁' },
+                train: { time: '2小时', price: 40, detail: '普速' },
+                driving: { time: '2.5小时', price: 150, detail: '约200km' }
+            },
+            'dali-chengdu': {
+                flight: { time: '2小时', price: 500, detail: '每日5+班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '16-18小时', price: 280, detail: '硬卧 需中转' },
+                driving: { time: '12小时', price: 700, detail: '约1100km' }
+            },
+            'dali-guangzhou': {
+                flight: { time: '2.5小时', price: 600, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '24-28小时', price: 350, detail: '硬卧 需中转' },
+                driving: { time: '20小时', price: 1200, detail: '约1800km' }
+            },
+            'dali-chongqing': {
+                flight: { time: '2小时', price: 500, detail: '每日3-5班次' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '16-18小时', price: 280, detail: '硬卧 需中转' },
+                driving: { time: '14小时', price: 800, detail: '约1300km' }
+            },
+            'dali-xiamen': {
+                flight: { time: '2.5小时', price: 600, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '26-30小时', price: 380, detail: '硬卧 需中转' },
+                driving: { time: '20小时', price: 1200, detail: '约1800km' }
+            },
+            'dali-hangzhou': {
+                flight: { time: '3小时', price: 700, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '28-32小时', price: 400, detail: '硬卧 需中转' },
+                driving: { time: '24小时', price: 1400, detail: '约2200km' }
+            },
+            'dali-xian': {
+                flight: { time: '2.5小时', price: 600, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '24-28小时', price: 350, detail: '硬卧 需中转' },
+                driving: { time: '20小时', price: 1200, detail: '约1800km' }
+            },
+            'dali-nanjing': {
+                flight: { time: '3小时', price: 700, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '28-32小时', price: 400, detail: '硬卧 需中转' },
+                driving: { time: '24小时', price: 1400, detail: '约2200km' }
+            },
+            'dali-guilin': {
+                flight: { time: '1.5小时', price: 450, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '18-20小时', price: 280, detail: '硬卧 需中转' },
+                driving: { time: '14小时', price: 800, detail: '约1200km' }
+            },
+            'dali-changsha': {
+                flight: { time: '2.5小时', price: 600, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '22-26小时', price: 350, detail: '硬卧 需中转' },
+                driving: { time: '18小时', price: 1000, detail: '约1600km' }
+            },
+            'dali-shenzhen': {
+                flight: { time: '2.5小时', price: 650, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '26-30小时', price: 380, detail: '硬卧 需中转' },
+                driving: { time: '20小时', price: 1200, detail: '约1800km' }
+            },
+            'dali-sanya': {
+                flight: { time: '2小时', price: 600, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '-', price: '-', detail: '无直达火车' },
+                driving: { time: '18小时', price: 1100, detail: '约1600km' }
+            },
+            'dali-wuhan': {
+                flight: { time: '2.5小时', price: 600, detail: '经停/中转' },
+                highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' },
+                train: { time: '22-26小时', price: 350, detail: '硬卧 需中转' },
+                driving: { time: '18小时', price: 1000, detail: '约1600km' }
+            },
+            'shenyang-beijing': { flight: { time: '1.5小时', price: 400, detail: '每日15+班次' }, highSpeedRail: { time: '3小时', price: 350, detail: '二等座' }, train: { time: '8-10小时', price: 200, detail: '硬卧' }, driving: { time: '7小时', price: 400, detail: '约700km' } },
+            'shenyang-shanghai': { flight: { time: '2.5小时', price: 600, detail: '每日10+班次' }, highSpeedRail: { time: '10小时', price: 800, detail: '二等座' }, train: { time: '20-24小时', price: 400, detail: '硬卧' }, driving: { time: '16小时', price: 900, detail: '约1500km' } },
+            'changchun-beijing': { flight: { time: '2小时', price: 500, detail: '每日10+班次' }, highSpeedRail: { time: '4.5小时', price: 440, detail: '二等座' }, train: { time: '12-14小时', price: 250, detail: '硬卧' }, driving: { time: '10小时', price: 550, detail: '约1000km' } },
+            'changchun-shanghai': { flight: { time: '3小时', price: 700, detail: '每日5+班次' }, highSpeedRail: { time: '12小时', price: 1000, detail: '二等座' }, train: { time: '24-28小时', price: 450, detail: '硬卧' }, driving: { time: '20小时', price: 1100, detail: '约1900km' } },
+            'haikou-beijing': { flight: { time: '3.5小时', price: 800, detail: '每日5+班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '30-36小时', price: 400, detail: '硬卧 需轮渡' }, driving: { time: '26小时', price: 1500, detail: '约2600km' } },
+            'haikou-guangzhou': { flight: { time: '1.5小时', price: 400, detail: '每日10+班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '15-18小时', price: 250, detail: '硬卧 需轮渡' }, driving: { time: '14小时', price: 800, detail: '约1200km' } },
+            'haikou-shenzhen': { flight: { time: '1.5小时', price: 400, detail: '每日5+班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '18-20小时', price: 280, detail: '硬卧 需轮渡' }, driving: { time: '15小时', price: 850, detail: '约1300km' } },
+            'nanning-beijing': { flight: { time: '3.5小时', price: 800, detail: '每日8+班次' }, highSpeedRail: { time: '10小时', price: 800, detail: '二等座' }, train: { time: '24-28小时', price: 380, detail: '硬卧' }, driving: { time: '22小时', price: 1300, detail: '约2200km' } },
+            'nanning-guangzhou': { flight: { time: '1小时', price: 300, detail: '每日15+班次' }, highSpeedRail: { time: '2.5小时', price: 210, detail: '二等座' }, train: { time: '8-10小时', price: 150, detail: '硬卧' }, driving: { time: '6小时', price: 350, detail: '约550km' } },
+            'nanning-shenzhen': { flight: { time: '1小时', price: 300, detail: '每日8+班次' }, highSpeedRail: { time: '3.5小时', price: 280, detail: '二等座' }, train: { time: '10-12小时', price: 200, detail: '硬卧' }, driving: { time: '7小时', price: 400, detail: '约650km' } },
+            'guiyang-beijing': { flight: { time: '3小时', price: 750, detail: '每日8+班次' }, highSpeedRail: { time: '8小时', price: 780, detail: '二等座' }, train: { time: '24-28小时', price: 380, detail: '硬卧' }, driving: { time: '20小时', price: 1200, detail: '约1900km' } },
+            'guiyang-guangzhou': { flight: { time: '1.5小时', price: 450, detail: '每日10+班次' }, highSpeedRail: { time: '5小时', price: 440, detail: '二等座' }, train: { time: '14-16小时', price: 280, detail: '硬卧' }, driving: { time: '12小时', price: 700, detail: '约1100km' } },
+            'guiyang-chengdu': { flight: { time: '1.5小时', price: 450, detail: '每日8+班次' }, highSpeedRail: { time: '3小时', price: 260, detail: '二等座' }, train: { time: '10-12小时', price: 200, detail: '硬卧' }, driving: { time: '7小时', price: 400, detail: '约650km' } },
+            'guiyang-shanghai': { flight: { time: '2.5小时', price: 600, detail: '每日10+班次' }, highSpeedRail: { time: '9小时', price: 780, detail: '二等座' }, train: { time: '22-26小时', price: 380, detail: '硬卧' }, driving: { time: '18小时', price: 1000, detail: '约1700km' } },
+            'guiyang-xian': { flight: { time: '2小时', price: 500, detail: '每日5+班次' }, highSpeedRail: { time: '5小时', price: 460, detail: '二等座' }, train: { time: '14-16小时', price: 280, detail: '硬卧' }, driving: { time: '12小时', price: 700, detail: '约1100km' } },
+            'lanzhou-beijing': { flight: { time: '2.5小时', price: 700, detail: '每日8+班次' }, highSpeedRail: { time: '8小时', price: 680, detail: '二等座' }, train: { time: '20-24小时', price: 350, detail: '硬卧' }, driving: { time: '16小时', price: 900, detail: '约1700km' } },
+            'lanzhou-xian': { flight: { time: '1.5小时', price: 400, detail: '每日8+班次' }, highSpeedRail: { time: '3小时', price: 200, detail: '二等座' }, train: { time: '8-10小时', price: 130, detail: '硬卧' }, driving: { time: '7小时', price: 400, detail: '约650km' } },
+            'lanzhou-chengdu': { flight: { time: '2小时', price: 550, detail: '每日5+班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '16-18小时', price: 280, detail: '硬卧' }, driving: { time: '12小时', price: 700, detail: '约1100km' } },
+            'lanzhou-shanghai': { flight: { time: '3小时', price: 750, detail: '每日5+班次' }, highSpeedRail: { time: '11小时', price: 900, detail: '二等座' }, train: { time: '24-28小时', price: 400, detail: '硬卧' }, driving: { time: '20小时', price: 1200, detail: '约2000km' } },
+            'xining-beijing': { flight: { time: '3小时', price: 750, detail: '每日5+班次' }, highSpeedRail: { time: '10小时', price: 780, detail: '二等座' }, train: { time: '22-26小时', price: 350, detail: '硬卧' }, driving: { time: '18小时', price: 1000, detail: '约1800km' } },
+            'xining-xian': { flight: { time: '2小时', price: 500, detail: '每日5+班次' }, highSpeedRail: { time: '4.5小时', price: 330, detail: '二等座' }, train: { time: '12-14小时', price: 220, detail: '硬卧' }, driving: { time: '10小时', price: 550, detail: '约900km' } },
+            'xining-lanzhou': { flight: { time: '-', price: '-', detail: '距离太近无航班' }, highSpeedRail: { time: '2小时', price: 150, detail: '二等座' }, train: { time: '4-5小时', price: 100, detail: '硬卧' }, driving: { time: '3.5小时', price: 200, detail: '约250km' } },
+            'yinchuan-beijing': { flight: { time: '2.5小时', price: 650, detail: '每日5+班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '18-20小时', price: 300, detail: '硬卧' }, driving: { time: '14小时', price: 800, detail: '约1200km' } },
+            'yinchuan-xian': { flight: { time: '1.5小时', price: 450, detail: '每日3-5班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '12-14小时', price: 220, detail: '硬卧' }, driving: { time: '10小时', price: 550, detail: '约900km' } },
+            'huhehaote-beijing': { flight: { time: '1.5小时', price: 400, detail: '每日8+班次' }, highSpeedRail: { time: '2.5小时', price: 240, detail: '二等座' }, train: { time: '8-10小时', price: 180, detail: '硬卧' }, driving: { time: '6小时', price: 350, detail: '约500km' } },
+            'taiyuan-beijing': { flight: { time: '1小时', price: 300, detail: '每日10+班次' }, highSpeedRail: { time: '2.5小时', price: 200, detail: '二等座' }, train: { time: '6-8小时', price: 120, detail: '硬卧' }, driving: { time: '5小时', price: 300, detail: '约500km' } },
+            'taiyuan-xian': { flight: { time: '1小时', price: 300, detail: '每日5+班次' }, highSpeedRail: { time: '3小时', price: 200, detail: '二等座' }, train: { time: '8-10小时', price: 130, detail: '硬卧' }, driving: { time: '6小时', price: 350, detail: '约550km' } },
+            'taiyuan-shanghai': { flight: { time: '2小时', price: 500, detail: '每日8+班次' }, highSpeedRail: { time: '7小时', price: 580, detail: '二等座' }, train: { time: '14-16小时', price: 280, detail: '硬卧' }, driving: { time: '12小时', price: 650, detail: '约1100km' } },
+            'shijiazhuang-beijing': { flight: { time: '1小时', price: 300, detail: '每日10+班次' }, highSpeedRail: { time: '1.5小时', price: 190, detail: '二等座' }, train: { time: '4-6小时', price: 100, detail: '硬卧' }, driving: { time: '3.5小时', price: 200, detail: '约300km' } },
+            'shijiazhuang-shanghai': { flight: { time: '2小时', price: 450, detail: '每日8+班次' }, highSpeedRail: { time: '5.5小时', price: 490, detail: '二等座' }, train: { time: '12-14小时', price: 220, detail: '硬卧' }, driving: { time: '10小时', price: 550, detail: '约950km' } },
+            'shijiazhuang-xian': { flight: { time: '1.5小时', price: 400, detail: '每日5+班次' }, highSpeedRail: { time: '4小时', price: 400, detail: '二等座' }, train: { time: '10-12小时', price: 200, detail: '硬卧' }, driving: { time: '8小时', price: 450, detail: '约750km' } },
+            'hefei-beijing': { flight: { time: '2小时', price: 500, detail: '每日8+班次' }, highSpeedRail: { time: '4.5小时', price: 440, detail: '二等座' }, train: { time: '10-12小时', price: 220, detail: '硬卧' }, driving: { time: '10小时', price: 550, detail: '约950km' } },
+            'hefei-shanghai': { flight: { time: '1小时', price: 300, detail: '每日10+班次' }, highSpeedRail: { time: '2小时', price: 180, detail: '二等座' }, train: { time: '5-6小时', price: 100, detail: '硬卧' }, driving: { time: '5小时', price: 300, detail: '约450km' } },
+            'hefei-hangzhou': { flight: { time: '1.5小时', price: 350, detail: '每日5+班次' }, highSpeedRail: { time: '3小时', price: 280, detail: '二等座' }, train: { time: '6-8小时', price: 140, detail: '硬卧' }, driving: { time: '5小时', price: 300, detail: '约450km' } },
+            'hefei-nanjing': { flight: { time: '-', price: '-', detail: '距离太近无航班' }, highSpeedRail: { time: '1小时', price: 80, detail: '二等座' }, train: { time: '2-3小时', price: 50, detail: '普速' }, driving: { time: '2.5小时', price: 150, detail: '约180km' } },
+            'nanchang-beijing': { flight: { time: '2.5小时', price: 600, detail: '每日8+班次' }, highSpeedRail: { time: '6小时', price: 650, detail: '二等座' }, train: { time: '14-16小时', price: 300, detail: '硬卧' }, driving: { time: '14小时', price: 800, detail: '约1400km' } },
+            'nanchang-shanghai': { flight: { time: '1.5小时', price: 400, detail: '每日10+班次' }, highSpeedRail: { time: '4.5小时', price: 440, detail: '二等座' }, train: { time: '10-12小时', price: 220, detail: '硬卧' }, driving: { time: '8小时', price: 450, detail: '约800km' } },
+            'nanchang-guangzhou': { flight: { time: '1小时', price: 300, detail: '每日10+班次' }, highSpeedRail: { time: '4.5小时', price: 440, detail: '二等座' }, train: { time: '10-12小时', price: 220, detail: '硬卧' }, driving: { time: '8小时', price: 450, detail: '约800km' } },
+            'nanchang-hangzhou': { flight: { time: '1.5小时', price: 350, detail: '每日5+班次' }, highSpeedRail: { time: '3小时', price: 280, detail: '二等座' }, train: { time: '6-8小时', price: 140, detail: '硬卧' }, driving: { time: '6小时', price: 350, detail: '约550km' } },
+            'jinan-beijing': { flight: { time: '1小时', price: 350, detail: '每日10+班次' }, highSpeedRail: { time: '1.5小时', price: 200, detail: '二等座' }, train: { time: '5-6小时', price: 120, detail: '硬卧' }, driving: { time: '4.5小时', price: 250, detail: '约400km' } },
+            'jinan-shanghai': { flight: { time: '2小时', price: 450, detail: '每日10+班次' }, highSpeedRail: { time: '4小时', price: 400, detail: '二等座' }, train: { time: '10-12小时', price: 220, detail: '硬卧' }, driving: { time: '9小时', price: 500, detail: '约850km' } },
+            'jinan-xian': { flight: { time: '2小时', price: 500, detail: '每日5+班次' }, highSpeedRail: { time: '4小时', price: 400, detail: '二等座' }, train: { time: '12-14小时', price: 250, detail: '硬卧' }, driving: { time: '9小时', price: 500, detail: '约850km' } },
+            'jinan-hangzhou': { flight: { time: '2小时', price: 450, detail: '每日8+班次' }, highSpeedRail: { time: '4小时', price: 400, detail: '二等座' }, train: { time: '12-14小时', price: 250, detail: '硬卧' }, driving: { time: '9小时', price: 500, detail: '约850km' } },
+            'fuzhou-beijing': { flight: { time: '2.5小时', price: 600, detail: '每日8+班次' }, highSpeedRail: { time: '7小时', price: 650, detail: '二等座' }, train: { time: '16-18小时', price: 320, detail: '硬卧' }, driving: { time: '16小时', price: 900, detail: '约1700km' } },
+            'fuzhou-shanghai': { flight: { time: '1.5小时', price: 400, detail: '每日15+班次' }, highSpeedRail: { time: '4.5小时', price: 400, detail: '二等座' }, train: { time: '10-12小时', price: 220, detail: '硬卧' }, driving: { time: '8小时', price: 450, detail: '约750km' } },
+            'fuzhou-xiamen': { flight: { time: '-', price: '-', detail: '距离太近无航班' }, highSpeedRail: { time: '1小时', price: 65, detail: '二等座' }, train: { time: '2-3小时', price: 40, detail: '普速' }, driving: { time: '3小时', price: 180, detail: '约260km' } },
+            'fuzhou-guangzhou': { flight: { time: '1.5小时', price: 400, detail: '每日10+班次' }, highSpeedRail: { time: '5小时', price: 450, detail: '二等座' }, train: { time: '12-14小时', price: 250, detail: '硬卧' }, driving: { time: '10小时', price: 550, detail: '约950km' } },
+            'fuzhou-hangzhou': { flight: { time: '1小时', price: 300, detail: '每日8+班次' }, highSpeedRail: { time: '2.5小时', price: 250, detail: '二等座' }, train: { time: '5-6小时', price: 120, detail: '硬卧' }, driving: { time: '5小时', price: 300, detail: '约450km' } },
+            'dunhuang-beijing': { flight: { time: '3.5小时', price: 900, detail: '经停/中转' }, highSpeedRail: { time: '-', price: '-', detail: '无高铁' }, train: { time: '30-36小时', price: 400, detail: '硬卧' }, driving: { time: '22小时', price: 1300, detail: '约2000km' } },
+            'dunhuang-xian': { flight: { time: '2.5小时', price: 650, detail: '经停/中转' }, highSpeedRail: { time: '-', price: '-', detail: '无高铁' }, train: { time: '20-24小时', price: 300, detail: '硬卧' }, driving: { time: '16小时', price: 900, detail: '约1500km' } },
+            'dunhuang-lanzhou': { flight: { time: '2小时', price: 500, detail: '经停/中转' }, highSpeedRail: { time: '-', price: '-', detail: '无高铁' }, train: { time: '12-14小时', price: 200, detail: '硬卧' }, driving: { time: '10小时', price: 600, detail: '约1000km' } },
+            'dunhuang-chengdu': { flight: { time: '2.5小时', price: 700, detail: '经停/中转' }, highSpeedRail: { time: '-', price: '-', detail: '无高铁' }, train: { time: '24-28小时', price: 380, detail: '硬卧' }, driving: { time: '18小时', price: 1000, detail: '约1700km' } },
+            'zhangjiajie-beijing': { flight: { time: '3小时', price: 800, detail: '每日3-5班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '20-24小时', price: 350, detail: '硬卧 需中转' }, driving: { time: '18小时', price: 1000, detail: '约1600km' } },
+            'zhangjiajie-shanghai': { flight: { time: '2.5小时', price: 700, detail: '每日3-5班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '20-24小时', price: 350, detail: '硬卧 需中转' }, driving: { time: '16小时', price: 900, detail: '约1400km' } },
+            'zhangjiajie-changsha': { flight: { time: '1小时', price: 350, detail: '每日3-5班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '6-8小时', price: 150, detail: '硬卧 需中转' }, driving: { time: '5小时', price: 300, detail: '约450km' } },
+            'zhangjiajie-guangzhou': { flight: { time: '1.5小时', price: 450, detail: '每日3-5班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '12-14小时', price: 250, detail: '硬卧 需中转' }, driving: { time: '9小时', price: 500, detail: '约850km' } },
+            'zhangjiajie-chengdu': { flight: { time: '2小时', price: 550, detail: '每日3-5班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '14-16小时', price: 280, detail: '硬卧 需中转' }, driving: { time: '12小时', price: 700, detail: '约1100km' } },
+            'xishuangbanna-beijing': { flight: { time: '4小时', price: 1000, detail: '经停/中转' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '-', price: '-', detail: '无直达火车' }, driving: { time: '32小时', price: 2000, detail: '约3000km' } },
+            'xishuangbanna-shanghai': { flight: { time: '4小时', price: 900, detail: '经停/中转' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '-', price: '-', detail: '无直达火车' }, driving: { time: '30小时', price: 1800, detail: '约2800km' } },
+            'xishuangbanna-kunming': { flight: { time: '1小时', price: 350, detail: '每日10+班次' }, highSpeedRail: { time: '3.5小时', price: 200, detail: '中老铁路 二等座' }, train: { time: '-', price: '-', detail: '无直达普速' }, driving: { time: '8小时', price: 450, detail: '约550km' } },
+            'xishuangbanna-chengdu': { flight: { time: '2小时', price: 600, detail: '经停/中转' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '-', price: '-', detail: '无直达火车' }, driving: { time: '18小时', price: 1000, detail: '约1600km' } },
+            'xishuangbanna-guangzhou': { flight: { time: '2.5小时', price: 700, detail: '经停/中转' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '-', price: '-', detail: '无直达火车' }, driving: { time: '20小时', price: 1200, detail: '约1800km' } },
+            'xishuangbanna-lijiang': { flight: { time: '1小时', price: 400, detail: '每日3-5班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '-', price: '-', detail: '无直达火车' }, driving: { time: '12小时', price: 700, detail: '约1000km' } },
+            'xishuangbanna-dali': { flight: { time: '1小时', price: 400, detail: '每日3-5班次' }, highSpeedRail: { time: '-', price: '-', detail: '无直达高铁' }, train: { time: '-', price: '-', detail: '无直达火车' }, driving: { time: '10小时', price: 600, detail: '约800km' } }
         };
 
         let selectedSpots = [];
