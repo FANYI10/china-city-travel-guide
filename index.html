@@ -141,6 +141,8 @@
             width: 100%;
             height: 100%;
             z-index: 0;
+            object-fit: contain;
+            object-position: center center;
         }
         .map-svg .land {
             fill: #A8D8B9 !important;
@@ -535,7 +537,6 @@
             .header p { font-size: 0.9rem; }
             .main-container { padding: 15px; }
             .map-title { font-size: 1.2rem; }
-            .map-container { aspect-ratio: 3/4; }
             .city-marker { transform: translate(-50%, -100%) scale(0.85); }
             .marker-label { font-size: 0.7rem; }
             .sidebar { padding: 15px; }
@@ -561,7 +562,7 @@
             .main-container { padding: 10px; }
             .map-section { padding: 12px; }
             .map-title { font-size: 1rem; margin-bottom: 10px; }
-            .map-container { aspect-ratio: 2/3; border-radius: 12px; }
+            .map-container { border-radius: 12px; }
             .city-marker { transform: translate(-50%, -100%) scale(0.75); }
             .marker-pin { padding: 3px 6px; }
             .marker-dot { width: 8px; height: 8px; }
@@ -974,8 +975,6 @@
             cities.forEach(city => {
                 const marker = document.createElement('div');
                 marker.className = 'city-marker';
-                marker.style.left = `${city.x}%`;
-                marker.style.top = `${city.y}%`;
                 marker.dataset.cityId = city.id;
                 marker.innerHTML = `
                     <div class="marker-pin">
@@ -985,6 +984,33 @@
                 `;
                 marker.addEventListener('click', () => openCityModal(city));
                 mapContainer.appendChild(marker);
+            });
+            positionMarkers();
+            window.addEventListener('resize', positionMarkers);
+        }
+
+        function positionMarkers() {
+            const svgEl = mapContainer.querySelector('.map-svg');
+            if (!svgEl) return;
+            const containerRect = mapContainer.getBoundingClientRect();
+            const containerW = containerRect.width;
+            const containerH = containerRect.height;
+            // SVG viewBox is 800x600, calculate actual rendered area with object-fit: contain
+            const vbW = 800, vbH = 600;
+            const scale = Math.min(containerW / vbW, containerH / vbH);
+            const renderW = vbW * scale;
+            const renderH = vbH * scale;
+            const offsetX = (containerW - renderW) / 2;
+            const offsetY = (containerH - renderH) / 2;
+            const markers = mapContainer.querySelectorAll('.city-marker');
+            markers.forEach(marker => {
+                const cityId = marker.dataset.cityId;
+                const city = cities.find(c => c.id === cityId);
+                if (!city) return;
+                const px = offsetX + (city.x / 100) * renderW;
+                const py = offsetY + (city.y / 100) * renderH;
+                marker.style.left = px + 'px';
+                marker.style.top = py + 'px';
             });
         }
 
