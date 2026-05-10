@@ -874,6 +874,8 @@
                 <div class="city-guide-section">
                     <div class="guide-tabs">
                         <button class="guide-tab active" onclick="switchTab('spots')">🎯 景点</button>
+                        <button class="guide-tab" onclick="switchTab('restaurants')">🍽️ 餐厅</button>
+                        <button class="guide-tab" onclick="switchTab('metro')">🚇 地铁</button>
                         <button class="guide-tab" onclick="switchTab('guide')">📖 攻略</button>
                         <button class="guide-tab" onclick="switchTab('food')">🍜 美食</button>
                         <button class="guide-tab" onclick="switchTab('transport')">🚄 交通</button>
@@ -889,12 +891,36 @@
         const cities = [
             // 直辖市
             { id: 'beijing', name: '北京', x: 67.8, y: 41.2, category: 'municipality', spots: [
-                { name: '故宫博物院', x: 45, y: 35, icon: '🏯', desc: '明清两代皇家宫殿，世界最大的木质古建筑群，游览约4小时。', tags: ['世界遗产', '历史古迹', '必游'] },
-                { name: '八达岭长城', x: 65, y: 20, icon: '🧱', desc: '万里长城精华段，世界七大奇迹之一，游览约3-4小时。', tags: ['世界奇迹', '户外探险', '摄影'] },
-                { name: '颐和园', x: 30, y: 50, icon: '🏞️', desc: '清朝皇家园林，昆明湖万寿山，游览约3小时。', tags: ['皇家园林', '世界遗产', '休闲'] },
-                { name: '天坛公园', x: 55, y: 60, icon: '🏛️', desc: '明清皇帝祭天之所，祈年殿是北京地标，游览约2.5小时。', tags: ['世界遗产', '古建筑', '祈福'] },
-                { name: '什刹海', x: 40, y: 45, icon: '🌊', desc: '老北京风情街区，胡同游船酒吧，游览约2小时。', tags: ['老北京', '夜景', '酒吧'] }
-            ], transport: [
+                { name: '故宫博物院', x: 45, y: 35, icon: '🏯', desc: '明清两代皇家宫殿，世界最大的木质古建筑群，游览约4小时。', tags: ['世界遗产', '历史古迹', '必游'], metro: '地铁1号线天安门东站' },
+                { name: '八达岭长城', x: 65, y: 20, icon: '🧱', desc: '万里长城精华段，世界七大奇迹之一，游览约3-4小时。', tags: ['世界奇迹', '户外探险', '摄影'], metro: 'S2线八达岭站' },
+                { name: '颐和园', x: 30, y: 50, icon: '🏞️', desc: '清朝皇家园林，昆明湖万寿山，游览约3小时。', tags: ['皇家园林', '世界遗产', '休闲'], metro: '地铁4号线北宫门站' },
+                { name: '天坛公园', x: 55, y: 60, icon: '🏛️', desc: '明清皇帝祭天之所，祈年殿是北京地标，游览约2.5小时。', tags: ['世界遗产', '古建筑', '祈福'], metro: '地铁5号线天坛东门站' },
+                { name: '什刹海', x: 40, y: 45, icon: '🌊', desc: '老北京风情街区，胡同游船酒吧，游览约2小时。', tags: ['老北京', '夜景', '酒吧'], metro: '地铁6号线北海北站' },
+                { name: '南锣鼓巷', x: 48, y: 38, icon: '🏮', desc: '北京最古老的街区之一，文艺小店聚集地，免费开放。', tags: ['胡同', '文艺', '免费'], metro: '地铁6号线南锣鼓巷站' },
+                { name: '798艺术区', x: 70, y: 45, icon: '🎨', desc: '废弃工厂改造的艺术园区，画廊咖啡馆林立，免费开放。', tags: ['艺术', '拍照', '免费'], metro: '地铁14号线望京南站' },
+                { name: '鸟巢水立方', x: 65, y: 30, icon: '🏟️', desc: '奥运场馆，夜景灯光秀，可入内参观。', tags: ['奥运', '地标', '夜景'], metro: '地铁8号线奥体中心站' },
+                { name: '雍和宫', x: 52, y: 40, icon: '⛩️', desc: '北京最大的藏传佛教寺院，香火鼎盛，祈福灵验。', tags: ['佛教', '祈福', '古建筑'], metro: '地铁2/5号线雍和宫站' },
+                { name: '国家博物馆', x: 47, y: 42, icon: '🏛️', desc: '世界上单体建筑面积最大的博物馆，免费预约参观。', tags: ['博物馆', '免费', '历史'], metro: '地铁1号线天安门东站' }
+            ], restaurants: [
+                { name: '四季民福烤鸭店', x: 46, y: 36, icon: '🦆', desc: '故宫店可边吃烤鸭边看故宫，人均150元，需排队。', tags: ['烤鸭', '网红', '故宫景观'], metro: '地铁1号线天安门东站', price: '人均150元' },
+                { name: '大董烤鸭', x: 55, y: 50, icon: '🦆', desc: '高端烤鸭代表，意境菜品精致，人均300元。', tags: ['烤鸭', '高端', '米其林'], metro: '地铁10号线国贸站', price: '人均300元' },
+                { name: '全聚德前门店', x: 44, y: 40, icon: '🦆', desc: '百年老字号烤鸭，总店体验感最佳，人均180元。', tags: ['老字号', '烤鸭', '必打卡'], metro: '地铁2号线前门站', price: '人均180元' },
+                { name: '姚记炒肝', x: 50, y: 42, icon: '🍜', desc: '鼓楼老店，炒肝包子地道，人均25元。', tags: ['老北京', '早餐', '平价'], metro: '地铁8号线什刹海站', price: '人均25元' },
+                { name: '护国寺小吃', x: 38, y: 38, icon: '🥟', desc: '老北京小吃集合店，豆汁焦圈驴打滚，人均30元。', tags: ['小吃', '老字号', '平价'], metro: '地铁4号线平安里站', price: '人均30元' },
+                { name: '东来顺饭庄', x: 48, y: 44, icon: '🍲', desc: '百年涮羊肉老字号，铜锅炭火，人均120元。', tags: ['涮羊肉', '老字号', '铜锅'], metro: '地铁8号线什刹海站', price: '人均120元' },
+                { name: '南门涮肉', x: 42, y: 48, icon: '🍲', desc: '本地人推荐的涮肉店，性价比高，人均100元。', tags: ['涮羊肉', '本地推荐', '性价比'], metro: '地铁7号线广安门内站', price: '人均100元' },
+                { name: '海碗居', x: 35, y: 35, icon: '🍜', desc: '老北京炸酱面代表，面条劲道酱香浓郁，人均40元。', tags: ['炸酱面', '老北京', '平价'], metro: '地铁4号线新街口站', price: '人均40元' }
+            ], metro: {
+                lines: [
+                    { name: '1号线', color: '#C23A30', stations: ['苹果园', '古城', '八角游乐园', '八宝山', '玉泉路', '五棵松', '万寿路', '公主坟', '军事博物馆', '木樨地', '南礼士路', '复兴门', '西单', '天安门西', '天安门东', '王府井', '东单', '建国门', '永安里', '国贸', '大望路', '四惠', '四惠东', '高碑店', '传媒大学', '双桥', '管庄', '八里桥', '通州北苑', '果园', '九棵树', '梨园', '临河里', '环球度假区'] },
+                    { name: '2号线', color: '#0063B0', stations: ['西直门', '车公庄', '阜成门', '复兴门', '长椿街', '宣武门', '和平门', '前门', '崇文门', '北京站', '建国门', '朝阳门', '东四十条', '东直门', '雍和宫', '安定门', '鼓楼大街', '积水潭'] },
+                    { name: '4号线', color: '#008B8E', stations: ['安河桥北', '北宫门', '西苑', '圆明园', '北京大学东门', '中关村', '海淀黄庄', '人民大学', '魏公村', '国家图书馆', '动物园', '西直门', '新街口', '平安里', '西四', '灵境胡同', '西单', '宣武门', '陶然亭', '北京南站', '马家堡', '角门西', '公益西桥', '新宫', '西红门', '高米店北', '高米店南', '枣园', '清源路', '黄村西大街', '黄村火车站', '义和庄', '生物医药基地', '天宫院'] },
+                    { name: '5号线', color: '#A42789', stations: ['天通苑北', '天通苑', '天通苑南', '立水桥北', '立水桥', '北苑路北', '大屯路东', '惠新西街北口', '惠新西街南口', '和平西桥', '和平里北街', '雍和宫', '北新桥', '张自忠路', '东四', '灯市口', '东单', '崇文门', '磁器口', '天坛东门', '蒲黄榆', '刘家窑', '宋家庄'] },
+                    { name: '6号线', color: '#D29700', stations: ['金安桥', '苹果园', '杨庄', '西黄村', '廖公庄', '田村', '海淀五路居', '慈寿寺', '花园桥', '白石桥南', '车公庄西', '车公庄', '平安里', '北海北', '南锣鼓巷', '东四', '朝阳门', '东大桥', '呼家楼', '金台路', '十里堡', '青年路', '褡裢坡', '黄渠', '常营', '草房', '物资学院路', '通州北关', '通运门', '北运河西', '北运河东', '郝家府', '东夏园', '潞城'] },
+                    { name: '8号线', color: '#009B6B', stations: ['朱辛庄', '育知路', '平西府', '回龙观东大街', '霍营', '育新', '西小口', '永泰庄', '林萃桥', '森林公园南门', '奥林匹克公园', '奥体中心', '北土城', '安华桥', '安德里北街', '鼓楼大街', '什刹海', '南锣鼓巷', '中国美术馆', '金鱼胡同', '王府井', '前门', '珠市口', '天桥', '永定门外', '木樨园', '海户屯', '大红门南', '和义', '东高地', '火箭万源', '五福堂', '德茂', '瀛海'] }
+                ],
+                tips: '北京地铁实行分段计价，6公里内3元，全程最高10元。可刷公交卡或手机支付。'
+            }, transport: [
                 { name: '首都国际机场', type: 'airport', icon: '✈️', x: 70, y: 38, desc: '北京最大机场，距市区约30km，地铁机场线直达。' },
                 { name: '大兴国际机场', type: 'airport', icon: '✈️', x: 65, y: 44, desc: '新机场，距市区约50km，地铁大兴线可达。' },
                 { name: '北京南站', type: 'rail', icon: '🚄', x: 69, y: 43, desc: '高铁枢纽，京津城际、京沪高铁始发站。' },
@@ -948,13 +974,34 @@
                 { name: '广州站', type: 'rail', icon: '🚄', x: 63, y: 86, desc: '普速列车主要车站，地铁2号线/5号线可达。' }
             ]},
             { id: 'chengdu', name: '成都', x: 44.5, y: 62.5, category: 'capital', spots: [
-                { name: '大熊猫基地', x: 40, y: 20, icon: '🐼', desc: '世界著名的大熊猫保护基地，早上8点前到达熊猫最活跃。', tags: ['国宝熊猫', '亲子游', '必游'] },
-                { name: '宽窄巷子', x: 50, y: 45, icon: '🏠', desc: '成都历史文化街区，宽巷子窄巷子井巷子，体验慢生活。', tags: ['古街巷', '美食', '文艺'] },
-                { name: '锦里古街', x: 30, y: 55, icon: '🎭', desc: '三国文化主题古街，小吃天堂，晚上灯光很美。', tags: ['古街', '小吃', '夜景'] },
-                { name: '武侯祠', x: 25, y: 45, icon: '🏛️', desc: '纪念诸葛亮的祠庙，三国文化圣地，与锦里相邻。', tags: ['三国文化', '古建筑', '历史'] },
-                { name: '春熙路太古里', x: 60, y: 60, icon: '🛍️', desc: '成都核心商圈，IFS爬墙熊猫必打卡，时尚购物天堂。', tags: ['购物', '网红打卡', '美食'] },
-                { name: '人民公园', x: 45, y: 70, icon: '🌳', desc: '成都人休闲生活缩影，喝茶掏耳朵，体验地道慢生活。', tags: ['休闲', '茶馆', '本地生活'] }
-            ], transport: [
+                { name: '大熊猫基地', x: 40, y: 20, icon: '🐼', desc: '世界著名的大熊猫保护基地，早上8点前到达熊猫最活跃。', tags: ['国宝熊猫', '亲子游', '必游'], metro: '地铁3号线熊猫大道站转公交' },
+                { name: '宽窄巷子', x: 50, y: 45, icon: '🏠', desc: '成都历史文化街区，宽巷子窄巷子井巷子，体验慢生活。', tags: ['古街巷', '美食', '文艺'], metro: '地铁4号线宽窄巷子站' },
+                { name: '锦里古街', x: 30, y: 55, icon: '🎭', desc: '三国文化主题古街，小吃天堂，晚上灯光很美。', tags: ['古街', '小吃', '夜景'], metro: '地铁3号线高升桥站' },
+                { name: '武侯祠', x: 25, y: 45, icon: '🏛️', desc: '纪念诸葛亮的祠庙，三国文化圣地，与锦里相邻。', tags: ['三国文化', '古建筑', '历史'], metro: '地铁3号线高升桥站' },
+                { name: '春熙路太古里', x: 60, y: 60, icon: '🛍️', desc: '成都核心商圈，IFS爬墙熊猫必打卡，时尚购物天堂。', tags: ['购物', '网红打卡', '美食'], metro: '地铁2/3号线春熙路站' },
+                { name: '人民公园', x: 45, y: 70, icon: '🌳', desc: '成都人休闲生活缩影，喝茶掏耳朵，体验地道慢生活。', tags: ['休闲', '茶馆', '本地生活'], metro: '地铁2号线人民公园站' },
+                { name: '杜甫草堂', x: 35, y: 65, icon: '🏡', desc: '唐代诗人杜甫流寓成都时的故居，园林清幽雅致。', tags: ['诗词', '园林', '文化'], metro: '地铁4号线草堂北路站' },
+                { name: '青城山', x: 20, y: 30, icon: '⛰️', desc: '道教名山，前山看道观后山看自然，距市区1小时。', tags: ['道教', '登山', '避暑'], metro: '城际铁路青城山站' },
+                { name: '都江堰', x: 15, y: 25, icon: '🌊', desc: '世界遗产，古代水利工程奇迹，可与青城山一日游。', tags: ['世界遗产', '水利工程', '历史'], metro: '城际铁路离堆公园站' }
+            ], restaurants: [
+                { name: '蜀九香火锅', x: 52, y: 55, icon: '🍲', desc: '25年老字号，手工牛油锅底辣而不燥，九香牛肉必点。', tags: ['火锅', '老字号', '必吃'], metro: '地铁1号线倪家桥站', price: '人均120元' },
+                { name: '大龙燚火锅', x: 48, y: 60, icon: '🔥', desc: '嗜辣者天堂，地狱辣挑战，魔鬼牛肉是招牌。', tags: ['火锅', '重辣', '夜宵'], metro: '地铁1号线玉林站', price: '人均110元' },
+                { name: '冒椒火辣', x: 45, y: 50, icon: '🌶️', desc: '奎星楼街顶流，冷锅串串配火锅粉，下午4点放号。', tags: ['串串', '网红', '排队王'], metro: '地铁4号线宽窄巷子站', price: '人均80元' },
+                { name: '洞子口张老二凉粉', x: 40, y: 45, icon: '🍜', desc: '文殊院街扛把子，甜水面一绝，咸甜辣三重暴击。', tags: ['小吃', '甜水面', '老店'], metro: '地铁1号线文殊院站', price: '人均20元' },
+                { name: '贺记蛋烘糕', x: 55, y: 48, icon: '🥞', desc: '成都人童年味道，外脆内软，麻辣牛肉+萝卜干绝配。', tags: ['小吃', '蛋烘糕', '平价'], metro: '地铁4号线太升南路站', price: '人均15元' },
+                { name: '陈麻婆豆腐', x: 42, y: 58, icon: '🥘', desc: '麻婆豆腐发源地，豆腐嫩滑麻辣鲜香，百年老店。', tags: ['川菜', '老字号', '必吃'], metro: '地铁2号线通惠门站', price: '人均60元' },
+                { name: '钟水饺', x: 50, y: 52, icon: '🥟', desc: '1893年创制，红油水饺配盖碗茶，人民公园总店最正宗。', tags: ['小吃', '水饺', '老字号'], metro: '地铁2号线人民公园站', price: '人均25元' },
+                { name: '南桥耙蹄花', x: 38, y: 62, icon: '🍖', desc: '蹄花界扫地僧，山药当归炖蹄花汤浓肉糯，人均25元。', tags: ['蹄花', '平价', '本地推荐'], metro: '地铁4号线草堂北路站', price: '人均25元' }
+            ], metro: {
+                lines: [
+                    { name: '1号线', color: '#0085C2', stations: ['韦家碾', '升仙湖', '火车北站', '人民北路', '文殊院', '骡马市', '天府广场', '锦江宾馆', '华西坝', '省体育馆', '倪家桥', '桐梓林', '火车南站', '高新', '金融城', '孵化园', '世纪城', '天府三街', '天府五街', '华府大道', '四河', '华阳', '海昌路', '广福', '红石公园', '麓湖', '武汉路', '天府公园', '西博城', '广州路', '兴隆湖', '科学城'] },
+                    { name: '2号线', color: '#F2C75C', stations: ['犀浦', '天河路', '百草路', '金周路', '金科北路', '迎宾大道', '茶店子客运站', '羊犀立交', '一品天下', '蜀汉路东', '白果林', '中医大省医院', '通惠门', '人民公园', '天府广场', '春熙路', '东门大桥', '牛王庙', '牛市口', '东大路', '塔子山公园', '成都东客站', '成渝立交', '惠王陵', '洪河', '成都行政学院', '大面铺', '连山坡', '界牌', '龙泉驿', '龙平路'] },
+                    { name: '3号线', color: '#E50012', stations: ['成都医学院', '石油大学', '钟楼', '马超西路', '锦水河', '三河场', '金华寺东路', '植物园', '军区总医院', '熊猫大道', '动物园', '昭觉寺南路', '驷马桥', '李家沱', '前锋路', '红星桥', '市二医院', '春熙路', '新南门', '磨子桥', '省体育馆', '衣冠庙', '高升桥', '红牌楼', '太平园', '川藏立交', '武侯立交', '武青南路', '双凤桥', '龙桥路', '航都大街', '迎春桥', '东升', '双流广场', '三里坝', '双流西站'] },
+                    { name: '4号线', color: '#00A085', stations: ['万盛', '杨柳河', '凤溪河', '南熏大道', '光华公园', '涌泉', '凤凰大街', '马厂坝', '中坝', '成都西站', '清江西路', '文化宫', '西南财大', '草堂北路', '中医大省医院', '宽窄巷子', '骡马市', '太升南路', '市二医院', '玉双路', '双桥路', '万年场', '槐树店', '来龙', '十陵', '成都大学', '明蜀王陵', '西河'] },
+                    { name: '7号线', color: '#F48FB1', stations: ['火车北站', '北站西二路', '九里堤', '西南交大', '花照壁', '茶店子', '一品天下', '金沙博物馆', '文化宫', '东坡路', '龙爪堰', '武侯大道', '太平园', '高朋大道', '神仙树', '火车南站', '三瓦窑', '琉璃场', '四川师大', '狮子山', '槐树店', '双店路', '崔家店', '二仙桥', '八里庄', '府青路', '驷马桥', '火车北站'] }
+                ],
+                tips: '成都地铁票价2元起步，可刷天府通卡或手机支付。热门景点集中在1-4号线。'
+            }, transport: [
                 { name: '天府国际机场', type: 'airport', icon: '✈️', x: 49, y: 67, desc: '成都主要机场，距市区约50km，地铁18号线直达。' },
                 { name: '双流国际机场', type: 'airport', icon: '✈️', x: 44, y: 63, desc: '国内航线为主，距市区约15km，地铁10号线可达。' },
                 { name: '成都东站', type: 'rail', icon: '🚄', x: 48, y: 65, desc: '高铁枢纽，成渝高铁始发站，地铁2号线/7号线可达。' },
@@ -2754,7 +2801,7 @@
         function switchTab(tab) {
             currentTab = tab;
             document.querySelectorAll('.guide-tab').forEach(t => {
-                const tabMap = { spots: '景点', guide: '攻略', food: '美食', transport: '交通', tips: '贴士' };
+                const tabMap = { spots: '景点', restaurants: '餐厅', metro: '地铁', guide: '攻略', food: '美食', transport: '交通', tips: '贴士' };
                 t.classList.toggle('active', t.textContent.includes(tabMap[tab] || ''));
             });
             renderGuideContent(currentCity);
@@ -2773,6 +2820,7 @@
                                     <span class="spot-item-name">${spot.name}</span>
                                 </div>
                                 <p class="spot-item-desc">${spot.desc}</p>
+                                ${spot.metro ? `<p style="font-size:0.75rem;color:#4ECDC4;margin:4px 0;">🚇 ${spot.metro}</p>` : ''}
                                 <div class="spot-item-tags">
                                     ${spot.tags.map(tag => `<span class="spot-item-tag">${tag}</span>`).join('')}
                                 </div>
@@ -2783,6 +2831,52 @@
                         💡 点击景点卡片或地图标记选择两个景点规划路线
                     </p>
                 `;
+            } else if (currentTab === 'restaurants') {
+                if (city.restaurants && city.restaurants.length > 0) {
+                    container.innerHTML = `
+                        <div class="spots-grid">
+                            ${city.restaurants.map((r, index) => `
+                                <div class="spot-item restaurant-item" data-index="${index}" onclick="selectRestaurant(${index})" style="background: linear-gradient(135deg, #FFF9E6 0%, #FFF3CD 100%);">
+                                    <div class="spot-item-header">
+                                        <span class="spot-item-icon">${r.icon}</span>
+                                        <span class="spot-item-name">${r.name}</span>
+                                    </div>
+                                    <p class="spot-item-desc">${r.desc}</p>
+                                    ${r.price ? `<p style="font-size:0.8rem;color:#FF6B6B;font-weight:600;margin:4px 0;">💰 ${r.price}</p>` : ''}
+                                    ${r.metro ? `<p style="font-size:0.75rem;color:#4ECDC4;margin:4px 0;">🚇 ${r.metro}</p>` : ''}
+                                    <div class="spot-item-tags">
+                                        ${r.tags.map(tag => `<span class="spot-item-tag" style="background:#FFE66D;">${tag}</span>`).join('')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <p style="text-align: center; color: #999; font-size: 0.8rem; margin-top: 12px;">
+                            💡 数据来源：小红书、抖音、大众点评热门推荐
+                        </p>
+                    `;
+                } else {
+                    container.innerHTML = `<p style="text-align:center;color:#999;padding:20px;">暂无餐厅数据</p>`;
+                }
+            } else if (currentTab === 'metro') {
+                if (city.metro && city.metro.lines) {
+                    container.innerHTML = `
+                        <div class="guide-card">
+                            <h4>🚇 地铁线路</h4>
+                            ${city.metro.lines.map(line => `
+                                <div style="margin-bottom: 12px; padding: 10px; background: #F8F9FA; border-radius: 10px; border-left: 4px solid ${line.color};">
+                                    <div style="font-weight: 600; color: ${line.color}; margin-bottom: 6px;">${line.name}</div>
+                                    <div style="font-size: 0.75rem; color: #666; line-height: 1.6;">
+                                        ${line.stations.slice(0, 8).join(' → ')}${line.stations.length > 8 ? ' → ...' : ''}
+                                    </div>
+                                    <div style="font-size: 0.7rem; color: #999; margin-top: 4px;">共 ${line.stations.length} 站</div>
+                                </div>
+                            `).join('')}
+                            ${city.metro.tips ? `<div class="guide-tip">💡 ${city.metro.tips}</div>` : ''}
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `<p style="text-align:center;color:#999;padding:20px;">该城市暂无地铁数据</p>`;
+                }
             } else if (currentTab === 'guide') {
                 container.innerHTML = `
                     <div class="guide-card">
@@ -2796,21 +2890,37 @@
                     </div>
                 `;
             } else if (currentTab === 'food') {
-                container.innerHTML = `
-                    <div class="guide-card">
-                        <h4>🍜 当地美食推荐</h4>
-                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-                            ${city.food.map(f => `
-                                <div style="background: linear-gradient(135deg, #FFE66D 0%, #FFD93D 100%); padding: 6px 12px; border-radius: 15px; font-size: 0.85rem;">
-                                    ${f}
-                                </div>
-                            `).join('')}
+                if (city.restaurants && city.restaurants.length > 0) {
+                    container.innerHTML = `
+                        <div class="guide-card">
+                            <h4>🍜 推荐餐厅</h4>
+                            <p style="font-size:0.8rem;color:#666;margin-bottom:10px;">点击"餐厅"标签查看详细店铺信息</p>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                                ${city.restaurants.slice(0, 6).map(r => `
+                                    <div style="background: linear-gradient(135deg, #FFE66D 0%, #FFD93D 100%); padding: 6px 12px; border-radius: 15px; font-size: 0.85rem;">
+                                        ${r.icon} ${r.name}
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
-                        <p style="margin-top: 12px; font-size: 0.8rem; color: #666;">
-                            💡 建议在当地人气餐厅品尝正宗风味，可以参考大众点评或询问当地人推荐。
-                        </p>
-                    </div>
-                `;
+                    `;
+                } else if (city.food) {
+                    container.innerHTML = `
+                        <div class="guide-card">
+                            <h4>🍜 当地美食推荐</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                                ${city.food.map(f => `
+                                    <div style="background: linear-gradient(135deg, #FFE66D 0%, #FFD93D 100%); padding: 6px 12px; border-radius: 15px; font-size: 0.85rem;">
+                                        ${f}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <p style="margin-top: 12px; font-size: 0.8rem; color: #666;">
+                                💡 建议在当地人气餐厅品尝正宗风味，可以参考大众点评或询问当地人推荐。
+                            </p>
+                        </div>
+                    `;
+                }
             } else if (currentTab === 'tips') {
                 container.innerHTML = `
                     <div class="guide-card">
@@ -2856,6 +2966,33 @@
                     </div>
                 `;
             }
+        }
+
+        function selectRestaurant(index) {
+            if (!currentCity || !currentCity.restaurants) return;
+            const restaurant = currentCity.restaurants[index];
+            // 高亮选中的餐厅
+            document.querySelectorAll('.restaurant-item').forEach((el, i) => {
+                el.style.outline = i === index ? '3px solid #FF6B6B' : 'none';
+            });
+            // 显示餐厅详情
+            const container = document.getElementById('guideContentContainer');
+            const existingDetail = document.getElementById('restaurantDetail');
+            if (existingDetail) existingDetail.remove();
+            
+            const detail = document.createElement('div');
+            detail.id = 'restaurantDetail';
+            detail.style.cssText = 'margin-top:15px;padding:15px;background:#FFF;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.1);';
+            detail.innerHTML = `
+                <h4 style="margin:0 0 10px 0;color:#FF6B6B;">${restaurant.icon} ${restaurant.name}</h4>
+                <p style="margin:0 0 8px 0;font-size:0.9rem;color:#333;">${restaurant.desc}</p>
+                ${restaurant.price ? `<p style="margin:0 0 8px 0;font-size:0.85rem;color:#FF6B6B;font-weight:600;">💰 ${restaurant.price}</p>` : ''}
+                ${restaurant.metro ? `<p style="margin:0 0 8px 0;font-size:0.8rem;color:#4ECDC4;">🚇 ${restaurant.metro}</p>` : ''}
+                <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                    ${restaurant.tags.map(t => `<span style="background:#FFE66D;padding:4px 10px;border-radius:12px;font-size:0.75rem;">${t}</span>`).join('')}
+                </div>
+            `;
+            container.appendChild(detail);
         }
 
         function selectCitySpot(index) {
