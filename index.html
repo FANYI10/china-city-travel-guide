@@ -806,11 +806,6 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <h1>🗺️ 中国城市旅行指南</h1>
-        <p>点击地图上的城市，探索精彩景点 | 选择两个景点规划路线</p>
-    </header>
-
     <main class="main-container">
         <section class="map-section">
             <h2 class="map-title">📍 中国热门旅行城市</h2>
@@ -2520,6 +2515,48 @@
                 marker.classList.add('selected');
             }
             updateRoutePanel();
+            updateWelcomeCard();
+        }
+
+        function updateWelcomeCard() {
+            const card = document.getElementById('spotCard');
+            if (selectedCities.length === 0) {
+                card.innerHTML = `
+                    <h3>👋 欢迎探索</h3>
+                    <p class="spot-desc">点击地图上的城市标记，查看城市详情和景点信息。可以查看攻略、选择景点规划路线。</p>
+                    <div class="spot-tags">
+                        <span class="tag">🗺️ 43个旅行城市</span>
+                        <span class="tag">📍 200+景点</span>
+                        <span class="tag">🚄 交通枢纽</span>
+                    </div>
+                `;
+            } else if (selectedCities.length === 1) {
+                const city = selectedCities[0];
+                const spotCount = city.spots ? city.spots.length : 0;
+                const foodList = city.food ? city.food.slice(0, 3).join('、') : '';
+                card.innerHTML = `
+                    <h3>📍 ${city.name}</h3>
+                    <p class="spot-desc">${city.guide ? city.guide.content.substring(0, 60) + '...' : ''}</p>
+                    <div class="spot-tags">
+                        <span class="tag">🏛️ ${spotCount}个景点</span>
+                        <span class="tag">🍜 ${foodList}</span>
+                    </div>
+                `;
+            } else {
+                const c1 = selectedCities[0], c2 = selectedCities[1];
+                const key = [c1.id, c2.id].sort().join('-');
+                const data = transportData[key];
+                const bestTime = data ? data.highSpeedRail.time : '未知';
+                const bestPrice = data ? ('¥' + data.highSpeedRail.price + '起') : '暂无数据';
+                card.innerHTML = `
+                    <h3>🗺️ ${c1.name} → ${c2.name}</h3>
+                    <p class="spot-desc">已选择两个城市，可以查看交通方式对比。高铁推荐：${bestTime}，${bestPrice}</p>
+                    <div class="spot-tags">
+                        <span class="tag">🚄 高铁 ${bestTime}</span>
+                        <span class="tag">💰 ${bestPrice}</span>
+                    </div>
+                `;
+            }
         }
 
         function updateRoutePanel() {
@@ -2590,9 +2627,9 @@
                         <button class="clear-btn" onclick="clearCitySelection()">清除选择</button>
                     </div>
                     <div class="city-pair">
-                        <span>${c1.icon} ${c1.name}</span>
+                        <span>${c1.name}</span>
                         <span class="arrow">⟷</span>
-                        <span>${c2.icon} ${c2.name}</span>
+                        <span>${c2.name}</span>
                     </div>
                     <div class="transport-options-grid">
             `;
@@ -2630,6 +2667,7 @@
             });
             selectedCities = [];
             updateRoutePanel();
+            updateWelcomeCard();
         }
 
         function positionMarkers() {
@@ -2928,6 +2966,7 @@
                 
                 mapSection.style.flex = `${mapRatio}`;
                 sidebar.style.flex = `${sidebarRatio}`;
+                positionMarkers();
             });
 
             document.addEventListener('mouseup', () => {
