@@ -620,6 +620,154 @@
             .tab-btn { -webkit-tap-highlight-color: transparent; }
             .generate-route-btn { -webkit-tap-highlight-color: transparent; }
         }
+        /* 城市选中状态 */
+        .city-marker.selected .marker-pin {
+            background: linear-gradient(135deg, #FF6B6B, #FF4757);
+            transform: scale(1.15);
+            box-shadow: 0 0 0 3px rgba(255,71,87,0.3), 0 4px 12px rgba(255,71,87,0.4);
+        }
+        .city-marker.selected .marker-dot {
+            background: #fff;
+            animation: pulse-selected 1.5s infinite;
+        }
+        @keyframes pulse-selected {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,71,87,0.5); }
+            50% { box-shadow: 0 0 0 6px rgba(255,71,87,0); }
+        }
+        /* 城市详情入口按钮 */
+        .city-enter-btn {
+            display: block;
+            margin-top: 4px;
+            padding: 2px 8px;
+            font-size: 0.6rem;
+            color: #fff;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .city-marker:hover .city-enter-btn,
+        .city-marker.selected .city-enter-btn {
+            opacity: 1;
+        }
+        /* 交通对比面板 */
+        .transport-compare {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .transport-compare-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .transport-compare-header h4 {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin: 0;
+        }
+        .transport-compare-header .clear-btn {
+            font-size: 0.75rem;
+            color: #999;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+        }
+        .transport-compare-header .clear-btn:hover {
+            color: #FF4757;
+        }
+        .city-pair {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .city-pair .arrow {
+            color: #FF4757;
+            font-size: 1.2rem;
+        }
+        .transport-options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .transport-card {
+            background: #F8F9FA;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .transport-card:hover {
+            background: #FFF0F0;
+            border-color: #FFD1D1;
+            transform: translateY(-2px);
+        }
+        .transport-card.recommended {
+            border-color: #FF4757;
+            background: #FFF5F5;
+        }
+        .transport-card .t-icon {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+        .transport-card .t-type {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .transport-card .t-time {
+            font-size: 0.75rem;
+            color: #666;
+            margin-top: 2px;
+        }
+        .transport-card .t-price {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #FF4757;
+            margin-top: 4px;
+        }
+        .transport-card .t-tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            padding: 1px 6px;
+            border-radius: 6px;
+            margin-top: 4px;
+        }
+        .t-tag.fastest { background: #E8F5E9; color: #2E7D32; }
+        .t-tag.cheapest { background: #FFF3E0; color: #E65100; }
+        .t-tag.recommended { background: #FCE4EC; color: #C62828; }
+        .transport-card .t-detail {
+            font-size: 0.65rem;
+            color: #999;
+            margin-top: 3px;
+        }
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .transport-options-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .transport-card { padding: 10px; }
+        }
+        @media (max-width: 480px) {
+            .transport-options-grid { grid-template-columns: 1fr; }
+            .transport-compare { padding: 12px; }
+            .city-pair { font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
@@ -963,6 +1111,339 @@
             }
         ];
 
+        const transportData = {
+            'beijing-shanghai': {
+                flight: { time: '2.5小时', price: 500, detail: '每日80+班次' },
+                highSpeedRail: { time: '4.5小时', price: 553, detail: '京沪高铁 二等座' },
+                train: { time: '12-15小时', price: 178, detail: '硬卧' },
+                driving: { time: '12小时', price: 600, detail: '约1200km 高速费约500元' }
+            },
+            'beijing-chengdu': {
+                flight: { time: '3小时', price: 700, detail: '每日20+班次' },
+                highSpeedRail: { time: '7.5小时', price: 778, detail: '二等座' },
+                train: { time: '25-30小时', price: 370, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1800km' }
+            },
+            'beijing-xian': {
+                flight: { time: '2小时', price: 600, detail: '每日15+班次' },
+                highSpeedRail: { time: '4.5小时', price: 515, detail: '二等座' },
+                train: { time: '12-15小时', price: 240, detail: '硬卧' },
+                driving: { time: '10小时', price: 550, detail: '约1100km' }
+            },
+            'beijing-hangzhou': {
+                flight: { time: '2.5小时', price: 550, detail: '每日20+班次' },
+                highSpeedRail: { time: '6小时', price: 631, detail: '二等座' },
+                train: { time: '15-18小时', price: 200, detail: '硬卧' },
+                driving: { time: '13小时', price: 700, detail: '约1300km' }
+            },
+            'beijing-guangzhou': {
+                flight: { time: '3小时', price: 700, detail: '每日30+班次' },
+                highSpeedRail: { time: '8小时', price: 862, detail: '二等座' },
+                train: { time: '20-24小时', price: 360, detail: '硬卧' },
+                driving: { time: '20小时', price: 1200, detail: '约2100km' }
+            },
+            'beijing-chongqing': {
+                flight: { time: '2.5小时', price: 650, detail: '每日15+班次' },
+                highSpeedRail: { time: '6-10小时', price: 890, detail: '二等座' },
+                train: { time: '22-28小时', price: 350, detail: '硬卧' },
+                driving: { time: '17小时', price: 950, detail: '约1700km' }
+            },
+            'beijing-nanjing': {
+                flight: { time: '2小时', price: 500, detail: '每日10+班次' },
+                highSpeedRail: { time: '3.5小时', price: 443, detail: '二等座' },
+                train: { time: '10-12小时', price: 180, detail: '硬卧' },
+                driving: { time: '10小时', price: 550, detail: '约1000km' }
+            },
+            'beijing-guilin': {
+                flight: { time: '3小时', price: 700, detail: '每日5+班次' },
+                highSpeedRail: { time: '10-11小时', price: 680, detail: '二等座' },
+                train: { time: '22-26小时', price: 340, detail: '硬卧' },
+                driving: { time: '19小时', price: 1100, detail: '约1900km' }
+            },
+            'beijing-lijiang': {
+                flight: { time: '4小时', price: 900, detail: '经停/中转' },
+                highSpeedRail: { time: '11-13小时', price: 880, detail: '需中转' },
+                train: { time: '35-40小时', price: 450, detail: '硬卧' },
+                driving: { time: '26小时', price: 1500, detail: '约2600km' }
+            },
+            'beijing-xiamen': {
+                flight: { time: '2.5小时', price: 600, detail: '每日10+班次' },
+                highSpeedRail: { time: '11小时', price: 770, detail: '二等座' },
+                train: { time: '24-28小时', price: 350, detail: '硬卧' },
+                driving: { time: '20小时', price: 1100, detail: '约2000km' }
+            },
+            'shanghai-chengdu': {
+                flight: { time: '3小时', price: 650, detail: '每日15+班次' },
+                highSpeedRail: { time: '12-14小时', price: 953, detail: '二等座' },
+                train: { time: '30-36小时', price: 400, detail: '硬卧' },
+                driving: { time: '22小时', price: 1200, detail: '约2100km' }
+            },
+            'shanghai-xian': {
+                flight: { time: '2.5小时', price: 600, detail: '每日15+班次' },
+                highSpeedRail: { time: '6-7小时', price: 669, detail: '二等座' },
+                train: { time: '18-22小时', price: 300, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1500km' }
+            },
+            'shanghai-hangzhou': {
+                flight: { time: '1小时', price: 300, detail: '每日10+班次' },
+                highSpeedRail: { time: '1小时', price: 73, detail: '二等座' },
+                train: { time: '2-3小时', price: 55, detail: '硬座' },
+                driving: { time: '2.5小时', price: 200, detail: '约180km' }
+            },
+            'shanghai-guangzhou': {
+                flight: { time: '2.5小时', price: 500, detail: '每日30+班次' },
+                highSpeedRail: { time: '7小时', price: 793, detail: '二等座' },
+                train: { time: '15-18小时', price: 280, detail: '硬卧' },
+                driving: { time: '15小时', price: 900, detail: '约1500km' }
+            },
+            'shanghai-chongqing': {
+                flight: { time: '3小时', price: 650, detail: '每日10+班次' },
+                highSpeedRail: { time: '10-12小时', price: 890, detail: '二等座' },
+                train: { time: '28-34小时', price: 380, detail: '硬卧' },
+                driving: { time: '20小时', price: 1100, detail: '约1900km' }
+            },
+            'shanghai-nanjing': {
+                flight: { time: '1小时', price: 350, detail: '每日8+班次' },
+                highSpeedRail: { time: '1.5小时', price: 134, detail: '二等座' },
+                train: { time: '3-4小时', price: 80, detail: '硬座' },
+                driving: { time: '3小时', price: 200, detail: '约300km' }
+            },
+            'shanghai-guilin': {
+                flight: { time: '2.5小时', price: 500, detail: '每日5+班次' },
+                highSpeedRail: { time: '9-10小时', price: 714, detail: '二等座' },
+                train: { time: '20-24小时', price: 320, detail: '硬卧' },
+                driving: { time: '15小时', price: 900, detail: '约1500km' }
+            },
+            'shanghai-lijiang': {
+                flight: { time: '4小时', price: 900, detail: '经停/中转' },
+                highSpeedRail: { time: '12-14小时', price: 1000, detail: '需中转' },
+                train: { time: '36-42小时', price: 480, detail: '硬卧' },
+                driving: { time: '28小时', price: 1600, detail: '约2800km' }
+            },
+            'shanghai-xiamen': {
+                flight: { time: '2小时', price: 450, detail: '每日15+班次' },
+                highSpeedRail: { time: '4.5小时', price: 326, detail: '二等座' },
+                train: { time: '8-10小时', price: 200, detail: '硬卧' },
+                driving: { time: '8小时', price: 500, detail: '约800km' }
+            },
+            'chengdu-xian': {
+                flight: { time: '1.5小时', price: 450, detail: '每日10+班次' },
+                highSpeedRail: { time: '3-4小时', price: 263, detail: '二等座' },
+                train: { time: '10-12小时', price: 200, detail: '硬卧' },
+                driving: { time: '8小时', price: 450, detail: '约750km' }
+            },
+            'chengdu-hangzhou': {
+                flight: { time: '3小时', price: 600, detail: '每日8+班次' },
+                highSpeedRail: { time: '9-11小时', price: 820, detail: '二等座' },
+                train: { time: '28-32小时', price: 380, detail: '硬卧' },
+                driving: { time: '20小时', price: 1100, detail: '约2000km' }
+            },
+            'chengdu-guangzhou': {
+                flight: { time: '2.5小时', price: 550, detail: '每日15+班次' },
+                highSpeedRail: { time: '7-8小时', price: 620, detail: '二等座' },
+                train: { time: '20-24小时', price: 300, detail: '硬卧' },
+                driving: { time: '17小时', price: 1000, detail: '约1700km' }
+            },
+            'chengdu-chongqing': {
+                flight: { time: '1小时', price: 300, detail: '每日10+班次' },
+                highSpeedRail: { time: '1.5小时', price: 154, detail: '二等座' },
+                train: { time: '3-4小时', price: 80, detail: '硬座' },
+                driving: { time: '3小时', price: 150, detail: '约300km' }
+            },
+            'chengdu-nanjing': {
+                flight: { time: '2.5小时', price: 550, detail: '每日5+班次' },
+                highSpeedRail: { time: '9-10小时', price: 740, detail: '二等座' },
+                train: { time: '22-26小时', price: 340, detail: '硬卧' },
+                driving: { time: '16小时', price: 900, detail: '约1600km' }
+            },
+            'chengdu-guilin': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '6.5小时', price: 439, detail: '二等座' },
+                train: { time: '14-16小时', price: 250, detail: '硬卧' },
+                driving: { time: '10小时', price: 600, detail: '约1000km' }
+            },
+            'chengdu-lijiang': {
+                flight: { time: '1.5小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '8小时', price: 500, detail: '二等座' },
+                train: { time: '16-18小时', price: 220, detail: '硬卧' },
+                driving: { time: '8小时', price: 400, detail: '约750km' }
+            },
+            'chengdu-xiamen': {
+                flight: { time: '2.5小时', price: 550, detail: '每日5+班次' },
+                highSpeedRail: { time: '8-10小时', price: 650, detail: '二等座' },
+                train: { time: '20-24小时', price: 320, detail: '硬卧' },
+                driving: { time: '16小时', price: 900, detail: '约1600km' }
+            },
+            'xian-hangzhou': {
+                flight: { time: '2.5小时', price: 550, detail: '每日8+班次' },
+                highSpeedRail: { time: '7-8小时', price: 653, detail: '二等座' },
+                train: { time: '20-24小时', price: 300, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1400km' }
+            },
+            'xian-guangzhou': {
+                flight: { time: '2.5小时', price: 600, detail: '每日15+班次' },
+                highSpeedRail: { time: '7-8小时', price: 815, detail: '二等座' },
+                train: { time: '18-22小时', price: 320, detail: '硬卧' },
+                driving: { time: '15小时', price: 900, detail: '约1500km' }
+            },
+            'xian-chongqing': {
+                flight: { time: '1.5小时', price: 400, detail: '每日8+班次' },
+                highSpeedRail: { time: '5-6小时', price: 420, detail: '二等座' },
+                train: { time: '10-12小时', price: 220, detail: '硬卧' },
+                driving: { time: '8小时', price: 450, detail: '约800km' }
+            },
+            'xian-nanjing': {
+                flight: { time: '2小时', price: 500, detail: '每日8+班次' },
+                highSpeedRail: { time: '5-6小时', price: 540, detail: '二等座' },
+                train: { time: '14-16小时', price: 260, detail: '硬卧' },
+                driving: { time: '10小时', price: 600, detail: '约1100km' }
+            },
+            'xian-guilin': {
+                flight: { time: '2小时', price: 500, detail: '每日3+班次' },
+                highSpeedRail: { time: '7-8小时', price: 520, detail: '二等座' },
+                train: { time: '16-18小时', price: 280, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1200km' }
+            },
+            'xian-lijiang': {
+                flight: { time: '2.5小时', price: 650, detail: '经停/中转' },
+                highSpeedRail: { time: '9-10小时', price: 650, detail: '需中转' },
+                train: { time: '24-28小时', price: 350, detail: '硬卧' },
+                driving: { time: '15小时', price: 850, detail: '约1500km' }
+            },
+            'xian-xiamen': {
+                flight: { time: '2.5小时', price: 550, detail: '每日5+班次' },
+                highSpeedRail: { time: '7-8小时', price: 580, detail: '二等座' },
+                train: { time: '18-20小时', price: 300, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1400km' }
+            },
+            'hangzhou-guangzhou': {
+                flight: { time: '2小时', price: 450, detail: '每日20+班次' },
+                highSpeedRail: { time: '7小时', price: 720, detail: '二等座' },
+                train: { time: '14-16小时', price: 260, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1200km' }
+            },
+            'hangzhou-chongqing': {
+                flight: { time: '2.5小时', price: 550, detail: '每日8+班次' },
+                highSpeedRail: { time: '8-10小时', price: 780, detail: '二等座' },
+                train: { time: '22-26小时', price: 350, detail: '硬卧' },
+                driving: { time: '16小时', price: 900, detail: '约1600km' }
+            },
+            'hangzhou-nanjing': {
+                flight: { time: '1小时', price: 300, detail: '每日5+班次' },
+                highSpeedRail: { time: '1.5小时', price: 134, detail: '二等座' },
+                train: { time: '3-4小时', price: 80, detail: '硬座' },
+                driving: { time: '3小时', price: 180, detail: '约280km' }
+            },
+            'hangzhou-guilin': {
+                flight: { time: '2小时', price: 450, detail: '每日5+班次' },
+                highSpeedRail: { time: '9小时', price: 714, detail: '二等座' },
+                train: { time: '18-20小时', price: 300, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1200km' }
+            },
+            'hangzhou-lijiang': {
+                flight: { time: '3.5小时', price: 800, detail: '经停/中转' },
+                highSpeedRail: { time: '11-13小时', price: 900, detail: '需中转' },
+                train: { time: '34-38小时', price: 450, detail: '硬卧' },
+                driving: { time: '24小时', price: 1400, detail: '约2400km' }
+            },
+            'hangzhou-xiamen': {
+                flight: { time: '1.5小时', price: 350, detail: '每日10+班次' },
+                highSpeedRail: { time: '3小时', price: 218, detail: '二等座' },
+                train: { time: '6-8小时', price: 180, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约700km' }
+            },
+            'guangzhou-chongqing': {
+                flight: { time: '2小时', price: 450, detail: '每日15+班次' },
+                highSpeedRail: { time: '6小时', price: 465, detail: '二等座' },
+                train: { time: '16-18小时', price: 260, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1400km' }
+            },
+            'guangzhou-nanjing': {
+                flight: { time: '2小时', price: 500, detail: '每日10+班次' },
+                highSpeedRail: { time: '7小时', price: 610, detail: '二等座' },
+                train: { time: '14-16小时', price: 280, detail: '硬卧' },
+                driving: { time: '12小时', price: 700, detail: '约1200km' }
+            },
+            'guangzhou-guilin': {
+                flight: { time: '1小时', price: 300, detail: '每日8+班次' },
+                highSpeedRail: { time: '3小时', price: 211, detail: '二等座' },
+                train: { time: '8-10小时', price: 150, detail: '硬卧' },
+                driving: { time: '6小时', price: 350, detail: '约550km' }
+            },
+            'guangzhou-lijiang': {
+                flight: { time: '2.5小时', price: 600, detail: '经停/中转' },
+                highSpeedRail: { time: '8-10小时', price: 550, detail: '需中转' },
+                train: { time: '22-26小时', price: 320, detail: '硬卧' },
+                driving: { time: '16小时', price: 900, detail: '约1600km' }
+            },
+            'guangzhou-xiamen': {
+                flight: { time: '1.5小时', price: 350, detail: '每日10+班次' },
+                highSpeedRail: { time: '4小时', price: 282, detail: '二等座' },
+                train: { time: '8-10小时', price: 180, detail: '硬卧' },
+                driving: { time: '7小时', price: 400, detail: '约700km' }
+            },
+            'chongqing-nanjing': {
+                flight: { time: '2小时', price: 500, detail: '每日5+班次' },
+                highSpeedRail: { time: '8-9小时', price: 720, detail: '二等座' },
+                train: { time: '20-24小时', price: 320, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1400km' }
+            },
+            'chongqing-guilin': {
+                flight: { time: '1.5小时', price: 350, detail: '每日3+班次' },
+                highSpeedRail: { time: '4-5小时', price: 304, detail: '二等座' },
+                train: { time: '12-14小时', price: 220, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约900km' }
+            },
+            'chongqing-lijiang': {
+                flight: { time: '1.5小时', price: 400, detail: '每日3+班次' },
+                highSpeedRail: { time: '6-7小时', price: 420, detail: '二等座' },
+                train: { time: '14-16小时', price: 240, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约900km' }
+            },
+            'chongqing-xiamen': {
+                flight: { time: '2小时', price: 450, detail: '每日5+班次' },
+                highSpeedRail: { time: '7-8小时', price: 560, detail: '二等座' },
+                train: { time: '18-20小时', price: 300, detail: '硬卧' },
+                driving: { time: '14小时', price: 800, detail: '约1400km' }
+            },
+            'nanjing-guilin': {
+                flight: { time: '2小时', price: 450, detail: '每日3+班次' },
+                highSpeedRail: { time: '8-9小时', price: 650, detail: '二等座' },
+                train: { time: '18-20小时', price: 300, detail: '硬卧' },
+                driving: { time: '13小时', price: 750, detail: '约1300km' }
+            },
+            'nanjing-lijiang': {
+                flight: { time: '3.5小时', price: 800, detail: '经停/中转' },
+                highSpeedRail: { time: '11-13小时', price: 850, detail: '需中转' },
+                train: { time: '30-34小时', price: 420, detail: '硬卧' },
+                driving: { time: '22小时', price: 1300, detail: '约2200km' }
+            },
+            'nanjing-xiamen': {
+                flight: { time: '2小时', price: 400, detail: '每日5+班次' },
+                highSpeedRail: { time: '5-6小时', price: 430, detail: '二等座' },
+                train: { time: '10-12小时', price: 240, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约900km' }
+            },
+            'guilin-lijiang': {
+                flight: { time: '1.5小时', price: 400, detail: '每日2+班次' },
+                highSpeedRail: { time: '6-7小时', price: 400, detail: '二等座' },
+                train: { time: '14-16小时', price: 230, detail: '硬卧' },
+                driving: { time: '10小时', price: 550, detail: '约1000km' }
+            },
+            'guilin-xiamen': {
+                flight: { time: '1.5小时', price: 350, detail: '每日3+班次' },
+                highSpeedRail: { time: '5-6小时', price: 380, detail: '二等座' },
+                train: { time: '12-14小时', price: 220, detail: '硬卧' },
+                driving: { time: '9小时', price: 500, detail: '约900km' }
+            },
+            'lijiang-xiamen': {
+                flight: { time: '2.5小时', price: 550, detail: '经停/中转' },
+                highSpeedRail: { time: '10-12小时', price: 700, detail: '需中转' },
+                train: { time: '26-30小时', price: 380, detail: '硬卧' },
+                driving: { time: '18小时', price: 1000, detail: '约1800km' }
+            }
+        };
+
         let selectedSpots = [];
         let currentCity = null;
         let citySelectedSpots = [];
@@ -970,6 +1451,8 @@
 
         const mapContainer = document.getElementById('map');
         const cityModal = document.getElementById('cityModal');
+
+        let selectedCities = [];
 
         function initMap() {
             cities.forEach(city => {
@@ -981,12 +1464,151 @@
                         <div class="marker-dot"></div>
                         <div class="marker-label">${city.icon} ${city.name}</div>
                     </div>
+                    <button class="city-enter-btn" data-action="enter">进入详情 →</button>
                 `;
-                marker.addEventListener('click', () => openCityModal(city));
+                // 点击标记主体 = 选择/取消城市
+                marker.querySelector('.marker-pin').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleCitySelection(city, marker);
+                });
+                // 点击"进入详情"按钮 = 打开城市模态框
+                marker.querySelector('.city-enter-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openCityModal(city);
+                });
                 mapContainer.appendChild(marker);
             });
             positionMarkers();
             window.addEventListener('resize', positionMarkers);
+        }
+
+        function toggleCitySelection(city, marker) {
+            const idx = selectedCities.findIndex(c => c.id === city.id);
+            if (idx >= 0) {
+                // 取消选择
+                selectedCities.splice(idx, 1);
+                marker.classList.remove('selected');
+            } else {
+                if (selectedCities.length >= 2) {
+                    // 已选2个，替换最早的
+                    const oldMarker = mapContainer.querySelector(`.city-marker[data-city-id="${selectedCities[0].id}"]`);
+                    if (oldMarker) oldMarker.classList.remove('selected');
+                    selectedCities.shift();
+                }
+                selectedCities.push(city);
+                marker.classList.add('selected');
+            }
+            updateRoutePanel();
+        }
+
+        function updateRoutePanel() {
+            const panel = document.getElementById('selectedSpots');
+            const btn = document.getElementById('generateBtn');
+            const result = document.getElementById('routeResult');
+
+            if (selectedCities.length === 0) {
+                panel.innerHTML = '<span class="placeholder-text">点击地图上的两个城市，查看交通方式</span>';
+                btn.disabled = true;
+                btn.textContent = '生成旅行路线 ✨';
+                result.classList.remove('active');
+                return;
+            }
+
+            if (selectedCities.length === 1) {
+                panel.innerHTML = `<span class="selected-spot">${selectedCities[0].icon} ${selectedCities[0].name}</span><span class="placeholder-text" style="margin-left:8px">再选一个城市...</span>`;
+                btn.disabled = true;
+                btn.textContent = '生成旅行路线 ✨';
+                result.classList.remove('active');
+                return;
+            }
+
+            // Two cities selected
+            const c1 = selectedCities[0], c2 = selectedCities[1];
+            panel.innerHTML = `
+                <span class="selected-spot">${c1.icon} ${c1.name}</span>
+                <span style="color:#999;margin:0 4px">↔</span>
+                <span class="selected-spot">${c2.icon} ${c2.name}</span>
+            `;
+            btn.disabled = false;
+            btn.textContent = '查看交通方式 🚀';
+            showTransportCompare(c1, c2);
+        }
+
+        function showTransportCompare(c1, c2) {
+            const result = document.getElementById('routeResult');
+            const key = [c1.id, c2.id].sort().join('-');
+            const data = transportData[key];
+
+            if (!data) {
+                result.innerHTML = '<p style="color:#999;text-align:center;padding:20px">暂无交通数据</p>';
+                result.classList.add('active');
+                return;
+            }
+
+            // Find fastest and cheapest
+            const options = [
+                { key: 'flight', icon: '✈️', name: '飞机', ...data.flight },
+                { key: 'highSpeedRail', icon: '🚄', name: '高铁', ...data.highSpeedRail },
+                { key: 'train', icon: '🚂', name: '火车', ...data.train },
+                { key: 'driving', icon: '🚗', name: '自驾', ...data.driving }
+            ];
+            const prices = options.map(o => o.price).filter(p => p > 0);
+            const minPrice = Math.min(...prices);
+            // Parse time to hours for comparison
+            const parseTime = (t) => {
+                const m = t.match(/([\d.]+)\s*小时/);
+                return m ? parseFloat(m[1]) : 999;
+            };
+            const times = options.map(o => parseTime(o.time));
+            const minTime = Math.min(...times);
+
+            let html = `
+                <div class="transport-compare">
+                    <div class="transport-compare-header">
+                        <h4>🚀 交通方式对比</h4>
+                        <button class="clear-btn" onclick="clearCitySelection()">清除选择</button>
+                    </div>
+                    <div class="city-pair">
+                        <span>${c1.icon} ${c1.name}</span>
+                        <span class="arrow">⟷</span>
+                        <span>${c2.icon} ${c2.name}</span>
+                    </div>
+                    <div class="transport-options-grid">
+            `;
+
+            options.forEach(opt => {
+                const isFastest = parseTime(opt.time) === minTime;
+                const isCheapest = opt.price === minPrice;
+                const isRecommended = opt.key === 'highSpeedRail';
+                let tags = '';
+                if (isFastest) tags += '<span class="t-tag fastest">最快</span> ';
+                if (isCheapest) tags += '<span class="t-tag cheapest">最省钱</span> ';
+                if (isRecommended && !isFastest && !isCheapest) tags += '<span class="t-tag recommended">推荐</span> ';
+
+                html += `
+                    <div class="transport-card ${isRecommended ? 'recommended' : ''}">
+                        <div class="t-icon">${opt.icon}</div>
+                        <div class="t-type">${opt.name}</div>
+                        <div class="t-time">⏱ ${opt.time}</div>
+                        <div class="t-price">¥${opt.price}起</div>
+                        <div>${tags}</div>
+                        <div class="t-detail">${opt.detail}</div>
+                    </div>
+                `;
+            });
+
+            html += '</div></div>';
+            result.innerHTML = html;
+            result.classList.add('active');
+        }
+
+        function clearCitySelection() {
+            selectedCities.forEach(c => {
+                const marker = mapContainer.querySelector(`.city-marker[data-city-id="${c.id}"]`);
+                if (marker) marker.classList.remove('selected');
+            });
+            selectedCities = [];
+            updateRoutePanel();
         }
 
         function positionMarkers() {
@@ -1296,6 +1918,13 @@
                 }
             });
         })();
+
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            if (selectedCities.length === 2) {
+                const result = document.getElementById('routeResult');
+                result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
 
         initMap();
     </script>
