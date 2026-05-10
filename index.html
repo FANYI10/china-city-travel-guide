@@ -2928,6 +2928,8 @@
                 marker.style.left = `${spot.x}%`;
                 marker.style.top = `${spot.y}%`;
                 marker.dataset.spotIndex = index;
+                marker.dataset.origX = spot.x;
+                marker.dataset.origY = spot.y;
                 marker.innerHTML = `
                     <div class="spot-icon">${spot.icon}</div>
                     <div class="spot-name-label">${spot.name}</div>
@@ -2936,10 +2938,73 @@
                 cityMap.appendChild(marker);
             });
             
+            // 自动分散重叠的标记
+            requestAnimationFrame(() => spreadOverlappingMarkers(cityMap));
+            
             // 同时更新列表视图
             if (currentCityView === 'list') {
                 renderSpotsList(city);
             }
+        }
+
+        // 自动分散重叠标记的算法
+        function spreadOverlappingMarkers(container) {
+            const markers = Array.from(container.querySelectorAll('.city-spot-marker'));
+            if (markers.length === 0) return;
+            
+            const containerRect = container.getBoundingClientRect();
+            if (containerRect.width === 0) return;
+            
+            const markerSize = 50; // 标记占用的最小间距（像素）
+            const padding = 5;     // 边距
+            const maxIterations = 30;
+            
+            // 将百分比坐标转换为像素坐标
+            const positions = markers.map(m => {
+                const left = parseFloat(m.style.left) / 100 * containerRect.width;
+                const top = parseFloat(m.style.top) / 100 * containerRect.height;
+                return { x: left, y: top, vx: 0, vy: 0 };
+            });
+            
+            // 迭代推开重叠的标记
+            for (let iter = 0; iter < maxIterations; iter++) {
+                let hasOverlap = false;
+                
+                for (let i = 0; i < positions.length; i++) {
+                    for (let j = i + 1; j < positions.length; j++) {
+                        const dx = positions[j].x - positions[i].x;
+                        const dy = positions[j].y - positions[i].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const minDist = markerSize;
+                        
+                        if (dist < minDist && dist > 0) {
+                            hasOverlap = true;
+                            const force = (minDist - dist) / dist * 0.5;
+                            const fx = dx * force;
+                            const fy = dy * force;
+                            
+                            positions[i].x -= fx;
+                            positions[i].y -= fy;
+                            positions[j].x += fx;
+                            positions[j].y += fy;
+                        }
+                    }
+                    
+                    // 边界约束
+                    positions[i].x = Math.max(padding, Math.min(containerRect.width - padding, positions[i].x));
+                    positions[i].y = Math.max(padding, Math.min(containerRect.height - padding, positions[i].y));
+                }
+                
+                if (!hasOverlap) break;
+            }
+            
+            // 应用分散后的位置（转回百分比）
+            markers.forEach((m, i) => {
+                const pctX = (positions[i].x / containerRect.width) * 100;
+                const pctY = (positions[i].y / containerRect.height) * 100;
+                m.style.left = pctX + '%';
+                m.style.top = pctY + '%';
+            });
         }
 
         function switchTab(tab) {
