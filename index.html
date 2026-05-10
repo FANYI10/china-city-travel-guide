@@ -766,7 +766,11 @@
         @media (max-width: 480px) {
             .transport-options-grid { grid-template-columns: 1fr; }
             .transport-compare { padding: 12px; }
-            .city-pair { font-size: 0.9rem; }
+            .city-pair {
+                font-size: 0.9rem;
+                text-align: center;
+                flex-wrap: wrap;
+            }
         }
     </style>
 </head>
@@ -1462,7 +1466,7 @@
                 marker.innerHTML = `
                     <div class="marker-pin">
                         <div class="marker-dot"></div>
-                        <div class="marker-label">${city.icon} ${city.name}</div>
+                        <div class="marker-label">${city.name}</div>
                     </div>
                     <button class="city-enter-btn" data-action="enter">进入详情 →</button>
                 `;
@@ -1515,7 +1519,7 @@
             }
 
             if (selectedCities.length === 1) {
-                panel.innerHTML = `<span class="selected-spot">${selectedCities[0].icon} ${selectedCities[0].name}</span><span class="placeholder-text" style="margin-left:8px">再选一个城市...</span>`;
+                panel.innerHTML = `<span class="selected-spot">${selectedCities[0].name}</span><span class="placeholder-text" style="margin-left:8px">再选一个城市...</span>`;
                 btn.disabled = true;
                 btn.textContent = '生成旅行路线 ✨';
                 result.classList.remove('active');
@@ -1525,9 +1529,9 @@
             // Two cities selected
             const c1 = selectedCities[0], c2 = selectedCities[1];
             panel.innerHTML = `
-                <span class="selected-spot">${c1.icon} ${c1.name}</span>
+                <span class="selected-spot">${c1.name}</span>
                 <span style="color:#999;margin:0 4px">↔</span>
-                <span class="selected-spot">${c2.icon} ${c2.name}</span>
+                <span class="selected-spot">${c2.name}</span>
             `;
             btn.disabled = false;
             btn.textContent = '查看交通方式 🚀';
@@ -1640,7 +1644,7 @@
             currentCity = city;
             citySelectedSpots = [];
             currentTab = 'spots';
-            document.getElementById('modalCityName').textContent = `${city.icon} ${city.name}`;
+            document.getElementById('modalCityName').textContent = `${city.name}`;
             renderCityMap(city);
             renderGuideContent(city);
             cityModal.classList.add('active');
